@@ -1,1 +1,237 @@
-<h1>SDGN Project Initializing...</h1>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sedogin INC | System Interface</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #00f2ff;
+            --bg-dark: #0a0a0b;
+            --panel-bg: rgba(20, 20, 25, 0.8);
+            --border-glow: 0 0 15px rgba(0, 242, 255, 0.3);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-dark);
+            color: white;
+            overflow: hidden;
+        }
+
+        /* Анимированный фон */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        /* Главный контейнер */
+        .main-frame {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            box-sizing: border-box;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Шапка */
+        header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 242, 255, 0.2);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 4px;
+            color: var(--primary-color);
+            text-shadow: var(--border-glow);
+        }
+
+        /* Навигация (Вкладки) */
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            background: none;
+            border: 1px solid transparent;
+            color: #888;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 13px;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .nav-btn.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .nav-btn:hover {
+            color: white;
+            text-shadow: var(--border-glow);
+        }
+
+        /* Контент */
+        .content-area {
+            flex-grow: 1;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .panel {
+            background: var(--panel-bg);
+            border-left: 4px solid var(--primary-color);
+            padding: 30px;
+            max-width: 800px;
+            box-shadow: var(--border-glow);
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 { font-family: 'Orbitron', sans-serif; color: var(--primary-color); margin-top: 0; }
+        p { line-height: 1.6; color: #ccc; }
+
+        /* Футер */
+        footer {
+            padding: 15px 40px;
+            font-size: 12px;
+            color: #555;
+            text-align: right;
+            border-top: 1px solid rgba(0, 242, 255, 0.1);
+        }
+
+        .status-dot {
+            height: 8px;
+            width: 8px;
+            background-color: #00ff00;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+            box-shadow: 0 0 5px #00ff00;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="main-frame">
+        <header>
+            <div class="logo">SEDOGIN INC.</div>
+            <nav>
+                <button class="nav-btn active" onclick="showSection('main')">Главная</button>
+                <button class="nav-btn" onclick="showSection('tech')">Технологии</button>
+                <button class="nav-btn" onclick="showSection('strategy')">Стратегия</button>
+            </nav>
+        </header>
+
+        <main class="content-area">
+            <section id="content-display" class="panel">
+                <h1>Инициализация системы...</h1>
+                <p>Добро пожаловать в центральный узел управления Sedogin INC. Мы создаем будущее через интеграцию продвинутого ИИ и стратегического планирования.</p>
+                <div style="margin-top: 20px;">
+                    <span class="status-dot"></span> Система активна: Jarvis Core v1.0
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            © 2026 SEDOGIN INC. | ВСЕ ПРАВА ЗАЩИЩЕНЫ
+        </footer>
+    </div>
+
+    <script>
+        // Простая логика переключения вкладок
+        const sections = {
+            main: {
+                title: "SEDOGIN INC. CORE",
+                text: "Центральный интерфейс управления проектами. Здесь объединяются код, финансы и стратегия."
+            },
+            tech: {
+                title: "TECHNICAL TRACK",
+                text: "Разработка Jarvis AI, создание веб-интерфейсов и автоматизация. Весь технический стек сосредоточен в этом секторе."
+            },
+            strategy: {
+                title: "STRATEGY & FINANCE",
+                text: "Планирование развития бренда, финансовые отчеты и долгосрочные цели Sedogin INC."
+            }
+        };
+
+        function showSection(name) {
+            const data = sections[name];
+            const display = document.getElementById('content-display');
+            
+            // Обновляем кнопки
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.innerText.toLowerCase().includes(name === 'main' ? 'главная' : name === 'tech' ? 'техно' : 'стратег')) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Эффект смены текста
+            display.style.opacity = 0;
+            setTimeout(() => {
+                display.innerHTML = `<h1>${data.title}</h1><p>${data.text}</p><div style="margin-top: 20px;"><span class="status-dot"></span> Сектор активен</div>`;
+                display.style.opacity = 1;
+            }, 300);
+        }
+
+        // Анимация фона (простые частицы)
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particles = [];
+        for(let i=0; i<50; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 2,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5
+            });
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(0, 242, 255, 0.3)';
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2);
+                ctx.fill();
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
