@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SEDOGIN INC. | Global System Interface</title>
+    <link rel="icon" type="image/png" href="logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -56,13 +57,19 @@
             flex-shrink: 0;
         }
 
+        /* Анимация пульсации логотипа */
+        @keyframes pulseGlow {
+            0%, 100% { text-shadow: 0 0 15px rgba(0, 242, 255, 0.4); }
+            50% { text-shadow: 0 0 25px rgba(0, 242, 255, 0.8), 0 0 5px rgba(0, 242, 255, 0.5); }
+        }
+
         .logo {
             font-family: 'Orbitron', sans-serif;
             font-size: 22px;
             font-weight: bold;
             letter-spacing: 5px;
             color: var(--primary-color);
-            text-shadow: var(--border-glow);
+            animation: pulseGlow 3s infinite;
         }
 
         nav { display: flex; gap: 20px; }
@@ -105,17 +112,54 @@
             max-width: 900px;
             width: 100%;
             box-shadow: var(--border-glow);
-            animation: fadeIn 0.6s ease-out;
+            animation: fadeIn 0.8s ease-out;
             position: relative;
+            overflow: hidden;
+        }
+
+        /* AI Сканирующая линия */
+        .panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(0, 242, 255, 0.4);
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.8);
+            animation: scanline 6s linear infinite;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        @keyframes scanline {
+            0% { top: -10px; opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { top: 100%; opacity: 0; }
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         h1 { font-family: 'Orbitron', sans-serif; color: var(--primary-color); margin-top: 0; font-size: 26px; }
         p { line-height: 1.8; color: #ccc; }
+
+        /* Левитация для картинки в центре */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .center-logo {
+            display: block;
+            margin: 20px auto;
+            max-width: 180px;
+            filter: drop-shadow(0 0 15px rgba(0, 242, 255, 0.5));
+            animation: float 4s ease-in-out infinite;
+        }
 
         /* Information Grid */
         .info-grid {
@@ -125,9 +169,8 @@
             margin-top: 30px;
         }
 
-        /* Accordion Style */
         details {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(0, 242, 255, 0.1);
             border-radius: 4px;
             padding: 15px;
@@ -136,7 +179,8 @@
 
         details[open] {
             border-color: var(--primary-color);
-            background: rgba(0, 242, 255, 0.02);
+            background: rgba(0, 242, 255, 0.05);
+            box-shadow: inset 0 0 15px rgba(0, 242, 255, 0.05);
         }
 
         summary {
@@ -148,8 +192,10 @@
             outline: none;
             text-transform: uppercase;
             letter-spacing: 1px;
+            transition: 0.3s;
         }
 
+        summary:hover { text-shadow: var(--border-glow); }
         summary::-webkit-details-marker { display: none; }
 
         .legal-text {
@@ -198,12 +244,7 @@
 
         <main class="content-area">
             <section id="content-display" class="panel">
-                <h1>SYSTEM INITIALIZATION...</h1>
-                <p>Welcome to the Sedogin INC. central command hub. We bridge the gap between advanced AI integration, automation, and long-term technological strategy.</p>
-                <div style="margin-top: 20px;">
-                    <span class="status-dot"></span> System Active: Core v1.2 | English Build
-                </div>
-            </section>
+                </section>
         </main>
 
         <footer>
@@ -215,7 +256,8 @@
         const sections = {
             main: {
                 title: "SEDOGIN INC. CORE",
-                content: `<p>Welcome to the central project management interface. This hub serves as the nexus for our development tracks, financial planning, and strategic AI deployment.</p>
+                content: `<img src="logo.png" alt="Sedogin Emblem" class="center-logo">
+                          <p>Welcome to the central project management interface. This hub serves as the nexus for our development tracks, financial planning, and strategic AI deployment.</p>
                           <div style="margin-top: 20px;"><span class="status-dot"></span> Core System Operational</div>`
             },
             tech: {
@@ -229,45 +271,42 @@
                 <div class="info-grid">
                     <details>
                         <summary>Privacy Policy</summary>
-                        <div class="legal-text">
-                            Privacy Policy for Sedvai (by Sedogin INC)
-                            Last Updated: March 2026
+                        <div class="legal-text">Privacy Policy for Sedvai (by Sedogin INC)
+Last Updated: March 2026
 
-                            1. Overview
-                            Sedogin INC ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how Sedvai collects and uses information when you use our application and website.
+1. Overview
+Sedogin INC ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how Sedvai collects and uses information when you use our application and website.
 
-                            2. Data Collection
-                            - Local Processing: Sedvai is designed to process voice commands and scripts locally on your device. We do not upload your private voice recordings to our servers.
-                            - System Access: To function, Sedvai requires access to your microphone and system controls (volume, brightness, applications). This access is used strictly to execute your commands.
-                            - Analytics: We may collect anonymous technical data (e.g., app version, crash reports) to improve performance. This data does not identify you personally.
+2. Data Collection
+- Local Processing: Sedvai is designed to process voice commands and scripts locally on your device. We do not upload your private voice recordings to our servers.
+- System Access: To function, Sedvai requires access to your microphone and system controls (volume, brightness, applications). This access is used strictly to execute your commands.
+- Analytics: We may collect anonymous technical data (e.g., app version, crash reports) to improve performance. This data does not identify you personally.
 
-                            3. Third-Party Services
-                            If you connect external AI models (like OpenAI or Groq) via API keys, your data is subject to the privacy policies of those providers. Sedogin INC does not store your API keys on its own servers; they are stored locally in your encrypted app settings.
+3. Third-Party Services
+If you connect external AI models (like OpenAI or Groq) via API keys, your data is subject to the privacy policies of those providers. Sedogin INC does not store your API keys on its own servers; they are stored locally in your encrypted app settings.
 
-                            4. Your Rights
-                            You have the right to revoke microphone and system permissions at any time through your Windows settings.
-                        </div>
+4. Your Rights
+You have the right to revoke microphone and system permissions at any time through your Windows settings.</div>
                     </details>
                     <details>
                         <summary>Terms of Use</summary>
-                        <div class="legal-text">
-                            Terms of Service for Sedvai (by Sedogin INC)
-                            Last Updated: March 2026
+                        <div class="legal-text">Terms of Service for Sedvai
+Last Updated: March 2026
 
-                            1. Overview
-                            Sedogin INC ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how Sedvai collects and uses information when you use our application and website.
+1. Acceptance of Terms
+By downloading or using Sedvai, provided by Sedogin INC, you agree to be bound by these Terms of Service.
 
-                            2. Data Collection
-                            - Local Processing: Sedvai is designed to process voice commands and scripts locally on your device. We do not upload your private voice recordings to our servers.
-                            - System Access: To function, Sedvai requires access to your microphone and system controls (volume, brightness, applications). This access is used strictly to execute your commands.
-                            - Analytics: We may collect anonymous technical data (e.g., app version, crash reports) to improve performance. This data does not identify you personally.
+2. License to Use
+We grant you a personal, non-exclusive, non-transferable license to use Sedvai for personal or professional purposes. You may not reverse-engineer, decompile, or attempt to extract the source code of the application without official permission from Sedogin INC.
 
-                            3. Third-Party Services
-                            If you connect external AI models (like OpenAI or Groq) via API keys, your data is subject to the privacy policies of those providers. Sedogin INC does not store your API keys on its own servers; they are stored locally in your encrypted app settings.
+3. "As Is" Warranty
+Sedvai is provided "AS IS" and "AS AVAILABLE." While we strive for perfection (Mark-8.5 and beyond), Sedogin INC is not responsible for any system errors, data loss, or hardware issues that may occur during the use of the software. Use it at your own risk.
 
-                            4. Your Rights
-                            You have the right to revoke microphone and system permissions at any time through your Windows settings.
-                        </div>
+4. User Conduct
+You agree not to use Sedvai for any illegal activities, including unauthorized access to computer systems or the creation of harmful scripts.
+
+5. Updates
+Sedogin INC reserves the right to update the software and modify these terms at any time to reflect changes in technology or law.</div>
                     </details>
                 </div>`
             }
@@ -290,6 +329,9 @@
                 document.querySelector('.content-area').scrollTop = 0;
             }, 200);
         }
+
+        // Инициализация первой вкладки при загрузке
+        showSection('main');
 
         // Particle Background
         const canvas = document.getElementById('bg-canvas');
