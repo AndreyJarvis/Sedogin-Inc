@@ -25,12 +25,63 @@
             overflow: hidden;
         }
 
+        /* Фоновая отрисовка */
         #bg-canvas {
             position: fixed;
             top: 0;
             left: 0;
-            z-index: -1;
+            z-index: -2;
         }
+
+        /* Дополнительные HUD-анимации для пустого пространства */
+        .hud-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .hud-corner {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border: 2px solid rgba(0, 242, 255, 0.15);
+        }
+
+        .hud-top-left {
+            top: 30px; left: 30px;
+            border-right: none; border-bottom: none;
+        }
+
+        .hud-bottom-right {
+            bottom: 30px; right: 30px;
+            border-left: none; border-top: none;
+        }
+
+        .hud-ring {
+            position: absolute;
+            right: 5%;
+            top: 20%;
+            width: 300px;
+            height: 300px;
+            border: 1px dashed rgba(0, 242, 255, 0.1);
+            border-radius: 50%;
+            animation: spin 30s linear infinite;
+        }
+
+        .hud-ring::before {
+            content: '';
+            position: absolute;
+            top: 20px; left: 20px; right: 20px; bottom: 20px;
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin-reverse 20s linear infinite;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes spin-reverse { 100% { transform: rotate(-360deg); } }
 
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
@@ -44,7 +95,7 @@
             height: 100vh;
             border: 1px solid rgba(0, 242, 255, 0.1);
             box-sizing: border-box;
-            backdrop-filter: blur(3px);
+            backdrop-filter: blur(2px);
         }
 
         header {
@@ -55,9 +106,9 @@
             border-bottom: 1px solid rgba(0, 242, 255, 0.2);
             background: rgba(10, 10, 15, 0.8);
             flex-shrink: 0;
+            z-index: 10;
         }
 
-        /* Анимация пульсации логотипа */
         @keyframes pulseGlow {
             0%, 100% { text-shadow: 0 0 15px rgba(0, 242, 255, 0.4); }
             50% { text-shadow: 0 0 25px rgba(0, 242, 255, 0.8), 0 0 5px rgba(0, 242, 255, 0.5); }
@@ -102,6 +153,7 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
+            z-index: 5;
         }
 
         .panel {
@@ -117,14 +169,10 @@
             overflow: hidden;
         }
 
-        /* AI Сканирующая линия */
         .panel::after {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
+            top: 0; left: 0; width: 100%; height: 2px;
             background: rgba(0, 242, 255, 0.4);
             box-shadow: 0 0 10px rgba(0, 242, 255, 0.8);
             animation: scanline 6s linear infinite;
@@ -145,9 +193,8 @@
         }
 
         h1 { font-family: 'Orbitron', sans-serif; color: var(--primary-color); margin-top: 0; font-size: 26px; }
-        p { line-height: 1.8; color: #ccc; }
+        p { line-height: 1.8; color: #ccc; font-size: 14px; }
 
-        /* Левитация для картинки в центре */
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
@@ -161,83 +208,101 @@
             animation: float 4s ease-in-out infinite;
         }
 
-        /* Information Grid */
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        details {
-            background: rgba(255, 255, 255, 0.02);
+        /* App Card & Buttons */
+        .app-card {
+            background: rgba(0, 242, 255, 0.02);
             border: 1px solid rgba(0, 242, 255, 0.1);
-            border-radius: 4px;
-            padding: 15px;
+            border-left: 3px solid var(--primary-color);
+            padding: 25px;
+            margin-top: 25px;
+            position: relative;
             transition: 0.3s;
         }
-
-        details[open] {
-            border-color: var(--primary-color);
-            background: rgba(0, 242, 255, 0.05);
-            box-shadow: inset 0 0 15px rgba(0, 242, 255, 0.05);
+        
+        .app-card:hover {
+            box-shadow: inset 0 0 20px rgba(0, 242, 255, 0.05);
+            border-color: rgba(0, 242, 255, 0.3);
         }
 
-        summary {
+        .app-card h2 {
             font-family: 'Orbitron', sans-serif;
-            font-size: 14px;
+            color: #fff;
+            font-size: 20px;
+            margin-top: 0;
+            letter-spacing: 2px;
+        }
+
+        .tech-btn {
+            background: transparent;
             color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            padding: 10px 25px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
             cursor: pointer;
-            list-style: none;
-            outline: none;
             text-transform: uppercase;
             letter-spacing: 1px;
             transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 15px;
         }
 
+        .tech-btn:hover {
+            background: var(--primary-color);
+            color: #000;
+            box-shadow: var(--border-glow);
+        }
+
+        /* Forms */
+        .tech-input {
+            background: rgba(0, 242, 255, 0.03);
+            border: 1px solid rgba(0, 242, 255, 0.15);
+            color: #fff;
+            padding: 12px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .tech-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.1);
+        }
+
+        /* Information Grid */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; }
+        details { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(0, 242, 255, 0.1); border-radius: 4px; padding: 15px; transition: 0.3s; }
+        details[open] { border-color: var(--primary-color); background: rgba(0, 242, 255, 0.05); box-shadow: inset 0 0 15px rgba(0, 242, 255, 0.05); }
+        summary { font-family: 'Orbitron', sans-serif; font-size: 14px; color: var(--primary-color); cursor: pointer; list-style: none; outline: none; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
         summary:hover { text-shadow: var(--border-glow); }
         summary::-webkit-details-marker { display: none; }
+        .legal-text { margin-top: 15px; font-size: 13px; color: #aaa; white-space: pre-line; max-height: 250px; overflow-y: auto; padding-right: 10px; }
 
-        .legal-text {
-            margin-top: 15px;
-            font-size: 13px;
-            color: #aaa;
-            white-space: pre-line;
-            max-height: 300px;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-
-        footer {
-            padding: 10px 40px;
-            font-size: 10px;
-            color: #444;
-            text-align: right;
-            border-top: 1px solid rgba(0, 242, 255, 0.1);
-            background: rgba(10, 10, 15, 0.9);
-        }
-
-        .status-dot {
-            height: 7px;
-            width: 7px;
-            background-color: #00ff00;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 6px;
-            box-shadow: 0 0 8px #00ff00;
-        }
+        footer { padding: 10px 40px; font-size: 10px; color: #444; text-align: right; border-top: 1px solid rgba(0, 242, 255, 0.1); background: rgba(10, 10, 15, 0.9); z-index: 10; }
+        .status-dot { height: 7px; width: 7px; background-color: #00ff00; border-radius: 50%; display: inline-block; margin-right: 6px; box-shadow: 0 0 8px #00ff00; }
     </style>
 </head>
 <body>
 
     <canvas id="bg-canvas"></canvas>
+    
+    <div class="hud-overlay">
+        <div class="hud-corner hud-top-left"></div>
+        <div class="hud-corner hud-bottom-right"></div>
+        <div class="hud-ring"></div>
+    </div>
 
     <div class="main-frame">
         <header>
             <div class="logo">SEDOGIN INC.</div>
             <nav>
                 <button class="nav-btn active" onclick="showSection('main')">Home</button>
-                <button class="nav-btn" onclick="showSection('tech')">Technology</button>
+                <button class="nav-btn" onclick="showSection('apps')">Our Applications</button>
                 <button class="nav-btn" onclick="showSection('info')">Information</button>
             </nav>
         </header>
@@ -256,14 +321,22 @@
         const sections = {
             main: {
                 title: "SEDOGIN INC. CORE",
-                content: `<img src="logo.png" alt="Sedogin Emblem" class="center-logo">
+                content: `<img src="logo.png" alt="Sedogin Emblem" class="center-logo" onerror="this.style.display='none'">
                           <p>Welcome to the central project management interface. This hub serves as the nexus for our development tracks, financial planning, and strategic AI deployment.</p>
                           <div style="margin-top: 20px;"><span class="status-dot"></span> Core System Operational</div>`
             },
-            tech: {
-                title: "TECHNICAL TRACK",
-                content: `<p>Cutting-edge development sector. We specialize in high-performance AI integration, architectural web design, and system-wide automation protocols. All technical assets and codebases are managed within this sector.</p>
-                          <div style="margin-top: 20px;"><span class="status-dot"></span> Tech Sector Online</div>`
+            apps: {
+                title: "OUR APPLICATIONS",
+                content: `<p>Explore our proprietary software solutions. All applications are built with a focus on high performance, secure local processing, and seamless system integration.</p>
+                          
+                          <div class="app-card">
+                              <h2>SEDVAI</h2>
+                              <p>Sedvai is an advanced, locally-processed AI assistant engineered by Sedogin INC. Designed to operate directly on your hardware, it executes complex voice commands, automates desktop workflows, and securely interfaces with external APIs. By processing commands locally, Sedvai guarantees maximum data privacy and operational efficiency without relying on constant cloud connections.</p>
+                              
+                              <a href="#" class="tech-btn" onclick="event.preventDefault(); alert('Transmission simulated: Deployment link is currently unavailable. Stand by for future updates.');">DOWNLOAD SEDVAI</a>
+                          </div>
+                          
+                          <div style="margin-top: 20px;"><span class="status-dot"></span> Deployment Sector Online</div>`
             },
             info: {
                 title: "INFORMATION HUB",
@@ -308,7 +381,18 @@ You agree not to use Sedvai for any illegal activities, including unauthorized a
 5. Updates
 Sedogin INC reserves the right to update the software and modify these terms at any time to reflect changes in technology or law.</div>
                     </details>
-                </div>`
+                </div>
+                
+                <hr style="border: 0; border-top: 1px solid rgba(0, 242, 255, 0.1); margin: 30px 0;">
+                
+                <h2 style="font-family: 'Orbitron', sans-serif; color: var(--primary-color); font-size: 18px; margin-bottom: 15px;">SUPPORT PROTOCOL</h2>
+                <form onsubmit="event.preventDefault(); alert('Signal intercepted. The message gateway is currently offline for maintenance. Emails will be routed in future updates.');">
+                    <input type="text" class="tech-input" placeholder="Identification (Name)" required>
+                    <input type="email" class="tech-input" placeholder="Return Vector (Email Address)" required>
+                    <textarea class="tech-input" placeholder="Message Protocol (Enter your request)" rows="4" required></textarea>
+                    <button type="submit" class="tech-btn">TRANSMIT DATA</button>
+                </form>
+                `
             }
         };
 
@@ -318,8 +402,11 @@ Sedogin INC reserves the right to update the software and modify these terms at 
             
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('active');
-                if(btn.innerText.toLowerCase() === name) btn.classList.add('active');
-                if(name === 'main' && btn.innerText.toLowerCase() === 'home') btn.classList.add('active');
+                if(btn.innerText.toLowerCase() === name || 
+                  (name === 'apps' && btn.innerText.toLowerCase() === 'our applications') ||
+                  (name === 'main' && btn.innerText.toLowerCase() === 'home')) {
+                    btn.classList.add('active');
+                }
             });
 
             display.style.opacity = 0;
@@ -330,7 +417,6 @@ Sedogin INC reserves the right to update the software and modify these terms at 
             }, 200);
         }
 
-        // Инициализация первой вкладки при загрузке
         showSection('main');
 
         // Particle Background
@@ -343,8 +429,8 @@ Sedogin INC reserves the right to update the software and modify these terms at 
             constructor() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.vx = (Math.random() - 0.5) * 0.5;
-                this.vy = (Math.random() - 0.5) * 0.5;
+                this.vx = (Math.random() - 0.5) * 0.4;
+                this.vy = (Math.random() - 0.5) * 0.4;
             }
             update() {
                 this.x += this.vx; this.y += this.vy;
@@ -352,19 +438,19 @@ Sedogin INC reserves the right to update the software and modify these terms at 
                 if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
             }
             draw() {
-                ctx.fillStyle = 'rgba(0, 242, 255, 0.4)';
+                ctx.fillStyle = 'rgba(0, 242, 255, 0.3)';
                 ctx.beginPath(); ctx.arc(this.x, this.y, 1.5, 0, Math.PI * 2); ctx.fill();
             }
         }
-        for (let i = 0; i < 80; i++) particles.push(new Particle());
+        for (let i = 0; i < 70; i++) particles.push(new Particle());
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particles.forEach((p, i) => {
                 p.update(); p.draw();
                 for (let j = i; j < particles.length; j++) {
                     const d = Math.sqrt((p.x - particles[j].x)**2 + (p.y - particles[j].y)**2);
-                    if (d < 100) {
-                        ctx.strokeStyle = `rgba(0, 242, 255, ${0.1 * (1 - d/100)})`;
+                    if (d < 120) {
+                        ctx.strokeStyle = `rgba(0, 242, 255, ${0.1 * (1 - d/120)})`;
                         ctx.lineWidth = 0.5;
                         ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
                     }
