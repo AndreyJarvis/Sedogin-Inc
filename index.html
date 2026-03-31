@@ -337,10 +337,10 @@ Sedogin INC reserves the right to update the software and modify these terms at 
                     <hr style="border: 0; border-top: 1px solid rgba(0, 242, 255, 0.1); margin: 30px 0;">
                     
                     <h2 style="font-family: 'Orbitron', sans-serif; color: var(--primary-color); font-size: 18px; margin-bottom: 15px;">SUPPORT PROTOCOL</h2>
-                    <form onsubmit="event.preventDefault(); alert('Signal intercepted. The message gateway is currently offline for maintenance. Emails will be routed in future updates.');">
-                        <input type="text" class="tech-input" placeholder="Identification (Name)" required>
-                        <input type="email" class="tech-input" placeholder="Return Vector (Email Address)" required>
-                        <textarea class="tech-input" placeholder="Message Protocol (Enter your request)" rows="4" required></textarea>
+                    <form action="https://formspree.io/f/xaqljvbv" method="POST">
+                        <input type="text" name="name" class="tech-input" placeholder="Identification (Name)" required>
+                        <input type="email" name="email" class="tech-input" placeholder="Return Vector (Email Address)" required>
+                        <textarea name="message" class="tech-input" placeholder="Message Protocol (Enter your request)" rows="4" required></textarea>
                         <button type="submit" class="tech-btn">TRANSMIT DATA</button>
                     </form>
                 `
