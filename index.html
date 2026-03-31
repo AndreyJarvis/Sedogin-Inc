@@ -3,8 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>SEDOGIN INC. | Global System Interface</title>
-    <link rel="icon" type="image/png" href="logo.png">
+    <meta name="title" content="SEDOGIN INC. | Global System Interface">
+    <meta name="description" content="Official website of Sedogin INC. Discover Sedvai, an advanced, locally-processed AI assistant engineered for secure desktop automation and high-performance workflow integration.">
+    <meta name="keywords" content="Sedogin INC, Sedvai, AI assistant, local AI, artificial intelligence, desktop automation, secure software">
+    <meta name="author" content="Sedogin INC">
+    <link rel="canonical" href="https://sedogin.com/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sedogin.com/">
+    <meta property="og:title" content="SEDOGIN INC. | Global System Interface">
+    <meta property="og:description" content="Official website of Sedogin INC. Discover Sedvai, an advanced, locally-processed AI assistant engineered for secure desktop automation.">
+    <meta property="og:image" content="https://sedogin.com/logo.png">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="logo.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="shortcut icon" href="logo.png">
+
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -25,7 +42,6 @@
             overflow: hidden;
         }
 
-        /* Фоновая отрисовка */
         #bg-canvas {
             position: fixed;
             top: 0;
@@ -33,7 +49,6 @@
             z-index: -2;
         }
 
-        /* Дополнительные HUD-анимации для пустого пространства */
         .hud-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -83,7 +98,6 @@
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes spin-reverse { 100% { transform: rotate(-360deg); } }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #0d0d0f; }
         ::-webkit-scrollbar-thumb { background: rgba(0, 242, 255, 0.2); border-radius: 3px; }
@@ -208,7 +222,6 @@
             animation: float 4s ease-in-out infinite;
         }
 
-        /* App Card & Buttons */
         .app-card {
             background: rgba(0, 242, 255, 0.02);
             border: 1px solid rgba(0, 242, 255, 0.1);
@@ -254,7 +267,6 @@
             box-shadow: var(--border-glow);
         }
 
-        /* Forms */
         .tech-input {
             background: rgba(0, 242, 255, 0.03);
             border: 1px solid rgba(0, 242, 255, 0.15);
@@ -274,7 +286,6 @@
             box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.1);
         }
 
-        /* Information Grid */
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; }
         details { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(0, 242, 255, 0.1); border-radius: 4px; padding: 15px; transition: 0.3s; }
         details[open] { border-color: var(--primary-color); background: rgba(0, 242, 255, 0.05); box-shadow: inset 0 0 15px rgba(0, 242, 255, 0.05); }
@@ -419,7 +430,6 @@ Sedogin INC reserves the right to update the software and modify these terms at 
 
         showSection('main');
 
-        // Particle Background
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
