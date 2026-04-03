@@ -166,10 +166,12 @@
         .log-window {
             background: #000; border: 1px solid #1a1a1a; padding: 15px;
             font-family: 'Fira Code', monospace; font-size: 12px; color: #00ff00;
-            height: 120px; overflow: hidden; margin-top: 25px; position: relative;
-            box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.05);
+            height: 140px; overflow-y: auto; margin-top: 25px; position: relative;
+            box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.05); display: flex; flex-direction: column;
         }
-        .log-line { margin-bottom: 5px; opacity: 0.8; }
+        .log-line { margin-bottom: 5px; opacity: 0.9; }
+        .log-window::-webkit-scrollbar { width: 4px; }
+        .log-window::-webkit-scrollbar-thumb { background: #333; }
 
         /* Applications & Tech Buttons */
         .app-card {
@@ -206,6 +208,24 @@
 
         footer { padding: 10px 40px; font-size: 10px; color: #444; text-align: right; border-top: 1px solid rgba(0, 242, 255, 0.1); background: rgba(10, 10, 15, 0.9); z-index: 10; }
         .status-dot { height: 7px; width: 7px; background-color: #00ff00; border-radius: 50%; display: inline-block; margin-right: 6px; box-shadow: 0 0 8px #00ff00; }
+
+        /* Modal Styles for Beta Waitlist */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px); z-index: 100;
+            justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: var(--panel-bg); border: 1px solid var(--primary-color);
+            padding: 40px; max-width: 400px; width: 90%; text-align: center;
+            box-shadow: var(--border-glow); position: relative; animation: fadeIn 0.4s ease-out;
+        }
+        .close-btn {
+            position: absolute; top: 10px; right: 15px; color: var(--primary-color);
+            font-size: 24px; cursor: pointer; transition: 0.3s;
+        }
+        .close-btn:hover { color: #fff; text-shadow: var(--border-glow); }
+
     </style>
 </head>
 <body>
@@ -218,11 +238,24 @@
         <div class="hud-ring"></div>
     </div>
 
+    <div id="betaModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">×</span>
+            <h2 style="font-family: 'Orbitron'; color: var(--primary-color); margin-top:0;">REQUEST ACCESS</h2>
+            <p style="font-size: 13px; margin-bottom: 25px;">Sedvai is currently in restricted testing. Enter your credentials to join the Mark-8.5 waitlist.</p>
+            <form action="https://formspree.io/f/xaqljvbv" method="POST">
+                <input type="email" name="waitlist_email" class="tech-input" placeholder="Enter valid email address" required>
+                <input type="hidden" name="_subject" value="New Sedvai Beta Request!">
+                <button type="submit" class="tech-btn" style="width: 100%;">JOIN WAITLIST</button>
+            </form>
+        </div>
+    </div>
+
     <div class="main-frame">
         <header>
             <div class="logo">SEDOGIN INC.</div>
             <nav>
-                <button class="nav-btn active" onclick="showSection('main')">Home</button>
+                <button class="nav-btn" onclick="showSection('main')">Home</button>
                 <button class="nav-btn" onclick="showSection('apps')">Our Applications</button>
                 <button class="nav-btn" onclick="showSection('info')">Information</button>
             </nav>
@@ -268,8 +301,11 @@
                     </div>
 
                     <div class="log-window" id="logBox">
-                        <div class="log-line">> Initializing system...</div>
-                        <div class="log-line">> Checking protocols... OK</div>
+                        <div id="logOutput"></div>
+                        <div style="display:flex; margin-top:5px;">
+                            <span style="color:var(--primary-color); margin-right:8px;">guest@sedogin:~$</span>
+                            <input type="text" id="termInput" style="background:transparent; border:none; color:#00ff00; font-family:'Fira Code', monospace; font-size:12px; outline:none; flex-grow:1; width:100%;" autocomplete="off">
+                        </div>
                     </div>
                 `
             },
@@ -282,7 +318,7 @@
                         <h2>SEDVAI</h2>
                         <p>Sedvai is an advanced, locally-processed AI assistant engineered by Sedogin INC. Designed to operate directly on your hardware, it executes complex voice commands, automates desktop workflows, and securely interfaces with external APIs. By processing commands locally, Sedvai guarantees maximum data privacy and operational efficiency without relying on constant cloud connections.</p>
                         
-                        <a href="#" class="tech-btn" onclick="event.preventDefault(); alert('Transmission simulated: Deployment link is currently unavailable. Stand by for future updates.');">DOWNLOAD SEDVAI</a>
+                        <button class="tech-btn" onclick="openModal()">REQUEST EARLY ACCESS</button>
                     </div>
                     
                     <div style="margin-top: 25px;"><span class="status-dot"></span> Deployment Sector Online</div>
@@ -347,14 +383,28 @@ Sedogin INC reserves the right to update the software and modify these terms at 
             }
         };
 
-        let logInterval;
+        // Modal Functions
+        function openModal() {
+            document.getElementById('betaModal').style.display = 'flex';
+        }
+        function closeModal() {
+            document.getElementById('betaModal').style.display = 'none';
+        }
+        // Закрытие модального окна при клике вне его области
+        window.onclick = function(event) {
+            const modal = document.getElementById('betaModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
 
+        // Section Handler
         function showSection(name) {
             const data = sections[name];
             const display = document.getElementById('content-display');
             
-            // Очистка интервала логов, чтобы избежать дублирования
-            if(logInterval) clearInterval(logInterval);
+            // Сохранение состояния сессии
+            localStorage.setItem('sedogin_active_tab', name);
             
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('active');
@@ -371,49 +421,75 @@ Sedogin INC reserves the right to update the software and modify these terms at 
                 display.style.opacity = 1;
                 document.querySelector('.content-area').scrollTop = 0;
                 
-                // Запуск логов только если открыта главная страница
-                if(name === 'main') startLogs();
+                // Инициализация интерактивного терминала, если открыта главная страница
+                if(name === 'main') {
+                    initInteractiveTerminal();
+                }
             }, 200);
         }
 
-        function startLogs() {
+        // Interactive Terminal Logic
+        function initInteractiveTerminal() {
+            const termInput = document.getElementById('termInput');
+            const logOutput = document.getElementById('logOutput');
             const logBox = document.getElementById('logBox');
-            if(!logBox) return;
-            
-            const lines = [
-                "> Scanning local nodes...",
-                "> Sedogin INC Security: Active",
-                "> Neural Link: Stable",
-                "> Memory Allocation: Optimized",
-                "> Mark-8.5 Alpha tests: 87% complete",
-                "> UI/UX modules loaded.",
-                "> Connection encrypted."
-            ];
-            let i = 0;
-            
-            logInterval = setInterval(() => {
-                if(!document.getElementById('logBox')) {
-                    clearInterval(logInterval);
-                    return;
-                }
+
+            if(!termInput || !logOutput) return;
+
+            const printLog = (text, color="#00ff00") => {
                 const line = document.createElement('div');
                 line.className = 'log-line';
-                line.innerText = lines[i % lines.length];
-                logBox.appendChild(line);
-                
-                // Удаляем старые строки, чтобы окно не переполнялось
-                if(logBox.childNodes.length > 8) {
-                    logBox.removeChild(logBox.firstChild);
-                }
-                
-                // Прокрутка вниз
+                line.style.color = color;
+                line.innerText = text;
+                logOutput.appendChild(line);
                 logBox.scrollTop = logBox.scrollHeight;
-                i++;
-            }, 2000);
+            };
+
+            // Начальная загрузка
+            printLog("> Boot sequence initiated...");
+            setTimeout(() => printLog("> Core loaded. Type 'help' for commands."), 500);
+
+            termInput.addEventListener('keydown', function(e) {
+                if(e.key === 'Enter') {
+                    const cmd = this.value.trim().toLowerCase();
+                    if(cmd === '') return;
+                    
+                    printLog(`guest@sedogin:~$ ${this.value}`, "#00f2ff");
+                    this.value = '';
+
+                    switch(cmd) {
+                        case 'help':
+                            printLog("Available commands: about, status, clear, join");
+                            break;
+                        case 'about':
+                            printLog("Sedogin INC - Automating the future. Developing Sedvai AI.");
+                            break;
+                        case 'status':
+                            printLog("Sedvai Mark-8.5: Offline (Local Development Mode)");
+                            printLog("Servers: Nominal");
+                            break;
+                        case 'clear':
+                            logOutput.innerHTML = '';
+                            break;
+                        case 'join':
+                            printLog("Accessing recruitment protocol...", "yellow");
+                            setTimeout(() => {
+                                window.location.href = "mailto:sedogin@example.com?subject=Sedogin%20Recruitment";
+                                printLog("> Email client triggered.", "yellow");
+                            }, 800);
+                            break;
+                        default:
+                            printLog(`Command not recognized: '${cmd}'`, "red");
+                    }
+                }
+            });
         }
 
-        // Инициализация при первой загрузке
-        showSection('main');
+        // Инициализация при первой загрузке (с учетом сохраненной сессии)
+        window.onload = () => {
+            const savedTab = localStorage.getItem('sedogin_active_tab') || 'main';
+            showSection(savedTab);
+        };
 
         // Система частиц (Фон)
         const canvas = document.getElementById('bg-canvas');
