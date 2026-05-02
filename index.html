@@ -384,9 +384,116 @@
             .logo { font-size: 11px; letter-spacing: 2px; }
             .dash-grid { grid-template-columns: 1fr 1fr; }
         }
+        /* ===== INTRO SCREEN ===== */
+        #intro-screen {
+            position: fixed; inset: 0; z-index: 9999;
+            background: #000;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            gap: 32px;
+            pointer-events: all;
+        }
+        #intro-screen.fade-out {
+            animation: introFadeOut 1s ease-in-out forwards;
+        }
+        @keyframes introFadeOut {
+            0%   { opacity: 1; }
+            100% { opacity: 0; pointer-events: none; }
+        }
+
+        /* Pixel grid logo */
+        #pixel-logo {
+            position: relative;
+            width: 160px; height: 160px;
+        }
+        #pixel-canvas {
+            display: block;
+            image-rendering: pixelated;
+        }
+
+        /* Scan line sweep over logo */
+        #pixel-logo::after {
+            content: '';
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 3px;
+            background: rgba(0, 242, 255, 0.7);
+            box-shadow: 0 0 12px 4px rgba(0, 242, 255, 0.5);
+            animation: scanSweep 1.8s ease-in-out 0.3s forwards;
+            opacity: 0;
+        }
+        @keyframes scanSweep {
+            0%   { top: 0%;   opacity: 1; }
+            100% { top: 100%; opacity: 0.3; }
+        }
+
+        /* Company name below logo */
+        #intro-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 22px; letter-spacing: 8px;
+            color: var(--primary-color);
+            opacity: 0;
+            animation: introNameIn 0.8s ease forwards 1.6s;
+            text-shadow: 0 0 20px rgba(0, 242, 255, 0.6);
+            text-transform: uppercase;
+        }
+        @keyframes introNameIn {
+            from { opacity: 0; letter-spacing: 20px; }
+            to   { opacity: 1; letter-spacing: 8px; }
+        }
+
+        /* Status line */
+        #intro-status {
+            font-family: 'Fira Code', monospace;
+            font-size: 12px; color: #444;
+            opacity: 0;
+            animation: introNameIn 0.6s ease forwards 2.2s;
+            letter-spacing: 2px;
+        }
+
+        /* Glow ring behind logo */
+        #intro-ring {
+            position: absolute;
+            width: 220px; height: 220px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 242, 255, 0.15);
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.08), inset 0 0 30px rgba(0, 242, 255, 0.04);
+            animation: ringPulse 2s ease-in-out infinite;
+        }
+        #intro-ring-2 {
+            position: absolute;
+            width: 260px; height: 260px;
+            border-radius: 50%;
+            border: 1px dashed rgba(0, 242, 255, 0.07);
+            animation: ringPulse 2s ease-in-out 0.5s infinite, spinRing 20s linear infinite;
+        }
+        @keyframes ringPulse {
+            0%, 100% { opacity: 0.4; }
+            50%       { opacity: 1; }
+        }
+        @keyframes spinRing {
+            100% { transform: rotate(360deg); }
+        }
+
+        #intro-wrap {
+            position: relative;
+            display: flex; justify-content: center; align-items: center;
+        }
     </style>
 </head>
 <body>
+
+    <!-- INTRO SCREEN -->
+    <div id="intro-screen">
+        <div id="intro-wrap">
+            <div id="intro-ring"></div>
+            <div id="intro-ring-2"></div>
+            <div id="pixel-logo">
+                <canvas id="pixel-canvas" width="160" height="160"></canvas>
+            </div>
+        </div>
+        <div id="intro-name">SEDOGIN INC.</div>
+        <div id="intro-status">// INITIALIZING GLOBAL SYSTEM INTERFACE</div>
+    </div>
 
     <canvas id="bg-canvas"></canvas>
     
@@ -682,6 +789,108 @@ Sedogin INC reserves the right to update the software and modify these terms at 
                 }
             });
         }
+
+        // ===== INTRO PIXEL ANIMATION =====
+        (function() {
+            const pc = document.getElementById('pixel-canvas');
+            const px = pc.getContext('2d');
+            const SIZE = 160;
+
+            // S pixel map (32x32)
+            // Draw S using Jacquard 24 font (same as the logo) — read pixels from canvas
+            const GRID = 64;
+            const offscreen = document.createElement('canvas');
+            offscreen.width = GRID; offscreen.height = GRID;
+            const og = offscreen.getContext('2d');
+
+            function buildSFromFont() {
+                og.clearRect(0, 0, GRID, GRID);
+                og.fillStyle = '#fff';
+                og.font = `${GRID * 0.85}px "Jacquard 24"`;
+                og.textAlign = 'center';
+                og.textBaseline = 'middle';
+                og.fillText('S', GRID / 2, GRID / 2 + 2);
+
+                const imgData = og.getImageData(0, 0, GRID, GRID).data;
+                const map = [];
+                for (let r = 0; r < GRID; r++) {
+                    let row = '';
+                    for (let c = 0; c < GRID; c++) {
+                        const idx = (r * GRID + c) * 4;
+                        row += imgData[idx + 3] > 60 ? '1' : '0';
+                    }
+                    map.push(row);
+                }
+                return map;
+            }
+
+            // Wait for Jacquard 24 to load, then build pixel map
+            let S_MAP = [];
+            document.fonts.load(`${GRID * 0.85}px "Jacquard 24"`).then(() => {
+                S_MAP = buildSFromFont();
+                // Rebuild pixel list after font loads
+                allPixels.length = 0;
+                const CS = SIZE / GRID;
+                for (let r = 0; r < GRID; r++) {
+                    for (let c = 0; c < GRID; c++) {
+                        if (S_MAP[r] && S_MAP[r][c] === '1') {
+                            allPixels.push({ r, c, revealed: false, alpha: 0 });
+                        }
+                    }
+                }
+                for (let i = allPixels.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [allPixels[i], allPixels[j]] = [allPixels[j], allPixels[i]];
+                }
+            });
+
+            const allPixels = [];
+            const CELL_S = SIZE / GRID;
+            const REVEAL_MS = 2000;
+            let startTime = null;
+            let animStarted = false;
+
+            function startPixelAnim() {
+                if (animStarted) return;
+                animStarted = true;
+                startTime = null;
+                requestAnimationFrame(drawIntro);
+            }
+
+            function drawIntro(ts) {
+                if (!startTime) startTime = ts;
+                const progress = Math.min((ts - startTime) / REVEAL_MS, 1);
+                const targetCount = Math.floor(progress * allPixels.length);
+
+                for (let i = 0; i < targetCount; i++) {
+                    if (!allPixels[i].revealed) allPixels[i].revealed = true;
+                }
+
+                px.clearRect(0, 0, SIZE, SIZE);
+                for (let i = 0; i < allPixels.length; i++) {
+                    const p = allPixels[i];
+                    if (!p.revealed) continue;
+                    p.alpha = Math.min(p.alpha + 0.1, 1);
+                    px.fillStyle = `rgba(0, 200, 255, ${p.alpha * 0.9})`;
+                    px.fillRect(p.c * CELL_S + 0.5, p.r * CELL_S + 0.5, CELL_S - 1, CELL_S - 1);
+                    px.fillStyle = `rgba(190, 245, 255, ${p.alpha * 0.35})`;
+                    px.fillRect(p.c * CELL_S + CELL_S * 0.25, p.r * CELL_S + CELL_S * 0.25, CELL_S * 0.5, CELL_S * 0.5);
+                }
+
+                if (progress < 1) requestAnimationFrame(drawIntro);
+            }
+
+            // Start as soon as font is ready (or after short fallback)
+            document.fonts.ready.then(startPixelAnim);
+            setTimeout(startPixelAnim, 300);
+
+            // Dismiss after 4.2s
+            setTimeout(() => {
+                const screen = document.getElementById('intro-screen');
+                screen.classList.add('fade-out');
+                setTimeout(() => { screen.style.display = 'none'; }, 1000);
+            }, 4200);
+        })();
 
         window.onload = () => {
             const savedTab = localStorage.getItem('sedogin_active_tab') || 'main';
