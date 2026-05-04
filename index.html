@@ -384,6 +384,63 @@
             .logo { font-size: 11px; letter-spacing: 2px; }
             .dash-grid { grid-template-columns: 1fr 1fr; }
         }
+
+        /* ===== GLITCH EFFECT ===== */
+        .glitch {
+            position: relative;
+        }
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            font-family: inherit; font-size: inherit;
+            font-weight: inherit; letter-spacing: inherit;
+            color: var(--primary-color);
+            overflow: hidden;
+            opacity: 0;
+        }
+        .glitch.is-glitching::before {
+            opacity: 1;
+            color: #ff00ff;
+            animation: glitchTop 0.15s steps(1) forwards;
+            clip-path: polygon(0 0, 100% 0, 100% 40%, 0 40%);
+        }
+        .glitch.is-glitching::after {
+            opacity: 1;
+            color: #00ffff;
+            animation: glitchBot 0.15s steps(1) forwards;
+            clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
+        }
+        @keyframes glitchTop {
+            0%   { transform: translate(-3px, -2px); opacity: 0.8; }
+            25%  { transform: translate(3px, -1px);  opacity: 0.6; }
+            50%  { transform: translate(-2px, 1px);  opacity: 0.8; }
+            75%  { transform: translate(2px, 2px);   opacity: 0.5; }
+            100% { transform: translate(0, 0);        opacity: 0; }
+        }
+        @keyframes glitchBot {
+            0%   { transform: translate(3px, 2px);  opacity: 0.8; }
+            25%  { transform: translate(-3px, 1px); opacity: 0.6; }
+            50%  { transform: translate(2px, -1px); opacity: 0.8; }
+            75%  { transform: translate(-2px, -2px);opacity: 0.5; }
+            100% { transform: translate(0, 0);       opacity: 0; }
+        }
+
+        /* ===== CURSOR TRAIL (desktop only) ===== */
+        .cursor-dot {
+            position: fixed;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            pointer-events: none;
+            z-index: 99999;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 6px 2px rgba(0, 242, 255, 0.6);
+            transition: opacity 0.4s ease;
+        }
+
         /* ===== INTRO SCREEN ===== */
         #intro-screen {
             position: fixed; inset: 0; z-index: 9999;
@@ -939,6 +996,84 @@ Sedogin INC reserves the right to update the software and modify these terms at 
 
         window.addEventListener('resize', () => { canvas.width=window.innerWidth; canvas.height=window.innerHeight; });
         animate();
+
+        // ===== CURSOR TRAIL (desktop only) =====
+        const isTouchDevice = () => window.matchMedia('(hover: none)').matches;
+
+        if (!isTouchDevice()) {
+            const TRAIL_COUNT = 12;
+            const dots = [];
+
+            for (let i = 0; i < TRAIL_COUNT; i++) {
+                const dot = document.createElement('div');
+                dot.classList.add('cursor-dot');
+                dot.style.opacity = (1 - i / TRAIL_COUNT) * 0.7;
+                dot.style.width  = Math.max(2, 6 - i * 0.35) + 'px';
+                dot.style.height = dot.style.width;
+                document.body.appendChild(dot);
+                dots.push({ el: dot, x: -100, y: -100 });
+            }
+
+            let mouseX = -100, mouseY = -100;
+
+            window.addEventListener('mousemove', e => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+
+            (function trailLoop() {
+                let x = mouseX, y = mouseY;
+                dots.forEach((dot, i) => {
+                    dot.el.style.left = x + 'px';
+                    dot.el.style.top  = y + 'px';
+                    const prev = dots[i] || { x, y };
+                    dot.x += (x - dot.x) * (0.35 - i * 0.02);
+                    dot.y += (y - dot.y) * (0.35 - i * 0.02);
+                    dot.el.style.left = dot.x + 'px';
+                    dot.el.style.top  = dot.y + 'px';
+                    x = dot.x; y = dot.y;
+                });
+                requestAnimationFrame(trailLoop);
+            })();
+        }
+
+        // ===== GLITCH ON H1 =====
+        function applyGlitchToH1() {
+            const h1 = document.querySelector('#content-display h1');
+            if (!h1 || h1.classList.contains('glitch')) return;
+            h1.classList.add('glitch');
+            h1.setAttribute('data-text', h1.textContent);
+        }
+
+        function triggerGlitch() {
+            const h1 = document.querySelector('#content-display h1');
+            if (!h1) return;
+            h1.classList.add('is-glitching');
+            setTimeout(() => h1.classList.remove('is-glitching'), 200);
+        }
+
+        // Re-apply glitch class whenever section changes
+        const _origShow = showSection;
+        window.showSection = function(name) {
+            _origShow(name);
+            // After DOM update (200ms fade) + small buffer
+            setTimeout(() => {
+                applyGlitchToH1();
+                // First immediate glitch
+                setTimeout(triggerGlitch, 100);
+            }, 350);
+        };
+
+        // Random glitch interval — less frequent on mobile
+        const glitchInterval = isTouchDevice() ? [6000, 14000] : [3500, 9000];
+        function scheduleGlitch() {
+            const delay = glitchInterval[0] + Math.random() * (glitchInterval[1] - glitchInterval[0]);
+            setTimeout(() => {
+                triggerGlitch();
+                scheduleGlitch();
+            }, delay);
+        }
+        scheduleGlitch();
     </script>
 </body>
 </html>
