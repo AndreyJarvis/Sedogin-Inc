@@ -248,68 +248,110 @@ nav { display: flex; gap: 8px; align-items: center; }
 }
 .hero-cta svg { width: 14px; height: 14px; }
 
-/* ── APPS ── */
-.apps-grid {
+/* ── APPS SHOWCASE ── */
+.apps-showcase {
+  position: relative; width: 100%; height: 100%;
+  min-height: calc(100vh - 120px);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+
+.app-slide {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
   padding: 60px 48px;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1px;
-  background: var(--border);
-  border-top: 1px solid var(--border);
+  opacity: 0; pointer-events: none;
+  transition: none;
+}
+.app-slide.entering {
+  animation: slideIn 0.8s cubic-bezier(0.22,1,0.36,1) forwards;
+}
+.app-slide.leaving {
+  animation: slideOut 0.5s cubic-bezier(0.4,0,1,1) forwards;
+}
+.app-slide.visible {
+  opacity: 1; pointer-events: all;
 }
 
-.app-tile {
-  background: rgba(6,13,26,0.85);
-  backdrop-filter: blur(20px);
-  padding: 40px 36px;
-  position: relative; overflow: hidden;
-  transition: background 0.4s ease;
-  cursor: none;
+@keyframes slideIn {
+  from { opacity:0; transform: translateY(40px); }
+  to   { opacity:1; transform: translateY(0); }
 }
-.app-tile::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0;
-  height: 1px; background: linear-gradient(90deg, transparent, var(--glow), transparent);
-  transform: scaleX(0); transition: transform 0.5s ease;
+@keyframes slideOut {
+  from { opacity:1; transform: translateY(0); }
+  to   { opacity:0; transform: translateY(-30px); }
 }
-.app-tile:hover { background: rgba(15,30,55,0.9); }
-.app-tile:hover::before { transform: scaleX(1); }
 
-.tile-tag {
-  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
-  color: var(--glow2); margin-bottom: 16px; display: block;
-  font-weight: 300;
+.slide-inner {
+  max-width: 680px; width: 100%;
+  display: flex; flex-direction: column;
+  align-items: flex-start;
 }
-.tile-name {
+
+.slide-counter {
+  font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 40px;
+  display: flex; align-items: center; gap: 16px;
+}
+.slide-counter-bar {
+  height: 1px; background: var(--border);
+  position: relative; width: 80px; overflow: hidden;
+}
+.slide-counter-fill {
+  position: absolute; top: 0; left: 0; height: 100%;
+  background: var(--glow);
+  transition: width 0.6s cubic-bezier(0.22,1,0.36,1);
+  box-shadow: 0 0 8px var(--glow);
+}
+
+.slide-tag {
+  font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--glow2); margin-bottom: 20px;
+  opacity: 0; animation: fadeUp 0.5s ease 0.15s forwards;
+}
+.slide-name {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 28px; font-weight: 300;
-  color: var(--white); margin-bottom: 14px;
-  line-height: 1.1;
+  font-size: clamp(44px, 6vw, 72px); font-weight: 300;
+  color: var(--white); line-height: 1; margin-bottom: 32px;
+  opacity: 0; animation: fadeUp 0.6s ease 0.25s forwards;
 }
-.tile-desc {
-  font-size: 13px; line-height: 1.7;
-  color: var(--muted); margin-bottom: 28px;
-  font-weight: 200;
+.slide-desc {
+  font-size: 14px; line-height: 1.85; color: var(--muted);
+  font-weight: 200; max-width: 520px; margin-bottom: 40px;
+  opacity: 0; animation: fadeUp 0.6s ease 0.38s forwards;
 }
-.tile-status {
+.slide-status {
   font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
   display: inline-flex; align-items: center; gap: 8px;
+  margin-bottom: 28px;
+  opacity: 0; animation: fadeUp 0.5s ease 0.45s forwards;
 }
-.tile-status::before {
+.slide-status::before {
   content: ''; width: 5px; height: 5px; border-radius: 50%;
-  background: currentColor;
-  box-shadow: 0 0 6px currentColor;
+  background: currentColor; box-shadow: 0 0 6px currentColor;
 }
 .status-live { color: #4dd4ac; }
 .status-soon { color: #f4a261; animation: blink 2s ease-in-out infinite; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
+.slide-actions {
+  display: flex; align-items: center; gap: 20px;
+  opacity: 0; animation: fadeUp 0.5s ease 0.55s forwards;
+}
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(18px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
 .tile-btn {
   display: inline-flex; align-items: center; gap: 8px;
   font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
   color: var(--glow); border: 1px solid rgba(77,184,212,0.3);
-  padding: 10px 20px; cursor: none;
-  background: transparent; margin-top: 20px;
+  padding: 12px 24px; cursor: none;
+  background: transparent;
   transition: all 0.3s ease; text-decoration: none;
+  font-family: 'Outfit', sans-serif; font-weight: 300;
 }
 .tile-btn:hover {
   background: rgba(77,184,212,0.08);
@@ -317,6 +359,41 @@ nav { display: flex; gap: 8px; align-items: center; }
   box-shadow: 0 0 20px rgba(77,184,212,0.1);
 }
 .tile-btn svg { width: 12px; height: 12px; }
+
+/* Nav arrows */
+.slide-nav {
+  position: absolute; bottom: 48px; right: 48px;
+  display: flex; gap: 12px; z-index: 10;
+}
+.slide-nav-btn {
+  width: 48px; height: 48px; border: 1px solid var(--border);
+  background: rgba(6,13,26,0.8); backdrop-filter: blur(10px);
+  color: var(--muted); cursor: none;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s ease;
+}
+.slide-nav-btn:hover {
+  border-color: var(--glow); color: var(--glow);
+  box-shadow: 0 0 20px rgba(77,184,212,0.1);
+}
+.slide-nav-btn svg { width: 16px; height: 16px; }
+.slide-nav-btn:disabled { opacity: 0.25; pointer-events: none; }
+
+/* Dot indicators */
+.slide-dots {
+  position: absolute; bottom: 56px; left: 48px;
+  display: flex; gap: 8px; align-items: center;
+}
+.slide-dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--border); cursor: none;
+  transition: all 0.4s ease;
+}
+.slide-dot.active {
+  background: var(--glow);
+  box-shadow: 0 0 8px var(--glow);
+  width: 20px; border-radius: 2px;
+}
 
 /* ── TEAM ── */
 .team-wrap {
@@ -331,6 +408,83 @@ nav { display: flex; gap: 8px; align-items: center; }
 .section-label::after {
   content: ''; flex: 1; height: 1px;
   background: linear-gradient(90deg, var(--border), transparent);
+}
+
+/* New team layout — vertical timeline style */
+.team-list {
+  display: flex; flex-direction: column;
+  position: relative;
+}
+.team-list::before {
+  content: '';
+  position: absolute; left: 22px; top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--border) 10%, var(--border) 90%, transparent);
+}
+
+.team-item {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 0 36px;
+  padding: 48px 0;
+  border-bottom: 1px solid rgba(77,184,212,0.07);
+  position: relative;
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.team-item.visible {
+  opacity: 1; transform: translateX(0);
+}
+.team-item:last-child { border-bottom: none; }
+
+.team-node {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 6px; padding-top: 6px;
+}
+.team-node-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 1px solid var(--glow);
+  background: var(--deep);
+  box-shadow: 0 0 12px rgba(77,184,212,0.4);
+  flex-shrink: 0; position: relative; z-index: 1;
+  transition: all 0.4s ease;
+}
+.team-item:hover .team-node-dot {
+  background: var(--glow);
+  box-shadow: 0 0 20px rgba(77,184,212,0.7);
+}
+.team-node-line {
+  width: 1px; flex: 1; min-height: 20px;
+  background: transparent;
+}
+
+.team-body { padding-right: 20px; }
+
+.team-index {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px; color: rgba(77,184,212,0.3);
+  letter-spacing: 2px; margin-bottom: 6px;
+}
+.team-role {
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--glow2); margin-bottom: 10px; display: block;
+}
+.team-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 34px; font-weight: 300;
+  color: var(--white); margin-bottom: 16px; line-height: 1;
+}
+.team-divider {
+  width: 28px; height: 1px; background: var(--glow);
+  margin-bottom: 16px; box-shadow: 0 0 6px rgba(77,184,212,0.5);
+  transition: width 0.4s ease;
+}
+.team-item:hover .team-divider { width: 56px; }
+.team-desc {
+  font-size: 13px; line-height: 1.8;
+  color: var(--muted); font-weight: 200;
+  max-width: 500px;
 }
 
 .team-featured {
@@ -412,6 +566,22 @@ nav { display: flex; gap: 8px; align-items: center; }
 .accordion-body p {
   font-size: 13px; line-height: 1.8; color: var(--muted);
   font-weight: 200; padding-bottom: 20px;
+}
+.accordion-body p::after {
+  content: '▋';
+  color: var(--glow);
+  opacity: 0;
+  animation: none;
+  margin-left: 2px;
+  font-size: 11px;
+}
+.accordion-body.typing p::after {
+  opacity: 1;
+  animation: cursorBlink 0.7s step-end infinite;
+}
+@keyframes cursorBlink {
+  0%,100% { opacity: 1; }
+  50%      { opacity: 0; }
 }
 
 /* Contact form */
@@ -577,14 +747,15 @@ footer span {
 
   .content-area{overflow-y:auto;}
 
-  .apps-grid{
-    grid-template-columns:1fr;
-    padding:0;
-  }
-  .app-tile{padding:32px 24px;}
+  .app-slide { padding: 40px 24px; }
+  .slide-name { font-size: clamp(36px,9vw,52px); }
+  .slide-nav { bottom: 24px; right: 24px; }
+  .slide-dots { bottom: 32px; left: 24px; }
 
-  .team-featured{grid-template-columns:1fr;}
   .team-wrap{padding:48px 24px;}
+  .team-list::before { left: 16px; }
+  .team-item { grid-template-columns: 32px 1fr; gap: 0 20px; padding: 36px 0; }
+  .team-name { font-size: 26px; }
   .info-wrap{padding:48px 24px;}
 
   .hero-title{font-size:clamp(32px,9vw,56px);}
@@ -592,9 +763,6 @@ footer span {
 
   footer{padding:12px 20px;}
   footer .copyright{display:none;}
-
-  .team-card{padding:36px 28px;}
-  .team-card::after{font-size:56px;}
 }
 </style>
 </head>
@@ -677,44 +845,104 @@ footer span {
 
     <!-- APPS -->
     <div class="section" id="s-apps">
-      <div class="apps-grid">
+      <div class="apps-showcase" id="apps-showcase">
 
-        <div class="app-tile">
-          <span class="tile-tag">AI Assistant</span>
-          <div class="tile-name">Sedvai</div>
-          <div class="tile-desc">Locally-processed AI assistant. Voice commands, desktop automation, external API integration — all on your hardware, your data stays yours.</div>
-          <div class="tile-status status-live">Available Now</div>
-          <a class="tile-btn" href="ms-windows-store://pdp/?productid=9NFN7ZC416W7">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h11v11H0zm13 0h11v11H13zM0 13h11v11H0zm13 0h11v11H13z"/></svg>
-            Microsoft Store
-          </a>
+        <!-- SLIDE 1: Sedvai -->
+        <div class="app-slide visible entering" id="slide-0">
+          <div class="slide-inner">
+            <div class="slide-counter">
+              <span id="slide-num">01 / 04</span>
+              <div class="slide-counter-bar"><div class="slide-counter-fill" id="slide-fill" style="width:25%"></div></div>
+            </div>
+            <div class="slide-tag">AI Assistant</div>
+            <div class="slide-name">Sedvai</div>
+            <div class="slide-desc">Locally-processed AI assistant. Voice commands, desktop automation, external API integration — all on your hardware. Your data stays yours.</div>
+            <div class="slide-status status-live">Available Now</div>
+            <div class="slide-actions">
+              <a class="tile-btn" href="ms-windows-store://pdp/?productid=9NFN7ZC416W7">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h11v11H0zm13 0h11v11H13zM0 13h11v11H0zm13 0h11v11H13z"/></svg>
+                Microsoft Store
+              </a>
+            </div>
+          </div>
         </div>
 
-        <div class="app-tile">
-          <span class="tile-tag">Game</span>
-          <div class="tile-name">The Path to Power</div>
-          <div class="tile-desc">A game about the path to power. Choose who you become — from businessman to genius programmer.</div>
-          <div class="tile-status status-soon">In Development</div>
-          <button class="tile-btn" onclick="openAccess('The Path to Power')">Early Access</button>
+        <!-- SLIDE 2: SedPulse -->
+        <div class="app-slide" id="slide-1">
+          <div class="slide-inner">
+            <div class="slide-counter">
+              <span>02 / 04</span>
+              <div class="slide-counter-bar"><div class="slide-counter-fill" style="width:50%"></div></div>
+            </div>
+            <div class="slide-tag">Productivity</div>
+            <div class="slide-name">SedPulse</div>
+            <div class="slide-desc">System analytics, auto-clicker, and time management. Know exactly what's happening on your machine in real time.</div>
+            <div class="slide-status status-live">Available Now</div>
+            <div class="slide-actions">
+              <a class="tile-btn" href="ms-windows-store://pdp/?productid=9NJH2L6R7QNK">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h11v11H0zm13 0h11v11H13zM0 13h11v11H0zm13 0h11v11H13z"/></svg>
+                Microsoft Store
+              </a>
+            </div>
+          </div>
         </div>
 
-        <div class="app-tile">
-          <span class="tile-tag">Platform</span>
-          <div class="tile-name">Sedogin Cloud</div>
-          <div class="tile-desc">Unified authentication across all Sedogin Inc. products. One account, every app.</div>
-          <div class="tile-status status-soon">Coming Soon</div>
-          <button class="tile-btn" onclick="openAccess('Sedogin Cloud')">Request Access</button>
+        <!-- SLIDE 3: The Path to Power -->
+        <div class="app-slide" id="slide-2">
+          <div class="slide-inner">
+            <div class="slide-counter">
+              <span>03 / 04</span>
+              <div class="slide-counter-bar"><div class="slide-counter-fill" style="width:75%"></div></div>
+            </div>
+            <div class="slide-tag">Game</div>
+            <div class="slide-name">The Path to Power</div>
+            <div class="slide-desc">A game about the path to power. Choose who you become — from businessman to genius programmer.</div>
+            <div class="slide-status status-soon">In Development</div>
+            <div class="slide-actions">
+              <button class="tile-btn" onclick="openAccess('The Path to Power')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                Early Access
+              </button>
+            </div>
+          </div>
         </div>
 
-        <div class="app-tile">
-          <span class="tile-tag">Productivity</span>
-          <div class="tile-name">SedPulse</div>
-          <div class="tile-desc">System analytics, auto-clicker, and time management. Know exactly what's happening on your machine.</div>
-          <div class="tile-status status-live">Available Now</div>
-          <a class="tile-btn" href="ms-windows-store://pdp/?productid=9NJH2L6R7QNK">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h11v11H0zm13 0h11v11H13zM0 13h11v11H0zm13 0h11v11H13z"/></svg>
-            Microsoft Store
-          </a>
+        <!-- SLIDE 4: Sedogin Cloud -->
+        <div class="app-slide" id="slide-3">
+          <div class="slide-inner">
+            <div class="slide-counter">
+              <span>04 / 04</span>
+              <div class="slide-counter-bar"><div class="slide-counter-fill" style="width:100%"></div></div>
+            </div>
+            <div class="slide-tag">Platform</div>
+            <div class="slide-name">Sedogin Cloud</div>
+            <div class="slide-desc">Unified authentication across all Sedogin Inc. products. One account, every app.</div>
+            <div class="slide-status status-soon">Coming Soon</div>
+            <div class="slide-actions">
+              <button class="tile-btn" onclick="openAccess('Sedogin Cloud')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                Request Access
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dots -->
+        <div class="slide-dots" id="slide-dots">
+          <div class="slide-dot active" onclick="goSlide(0)"></div>
+          <div class="slide-dot" onclick="goSlide(1)"></div>
+          <div class="slide-dot" onclick="goSlide(2)"></div>
+          <div class="slide-dot" onclick="goSlide(3)"></div>
+        </div>
+
+        <!-- Nav arrows -->
+        <div class="slide-nav">
+          <button class="slide-nav-btn" id="btn-prev" onclick="prevSlide()" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          </button>
+          <button class="slide-nav-btn" id="btn-next" onclick="nextSlide()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
         </div>
 
       </div>
@@ -725,47 +953,61 @@ footer span {
       <div class="team-wrap">
         <div class="section-label">Our Team</div>
 
-        <div class="team-featured">
-          <div class="team-card" data-index="01">
-            <span class="card-role">Founder & CEO</span>
-            <div class="card-name">Andrey Sedogin</div>
-            <div class="card-line"></div>
-            <p class="card-desc">Creator of Sedogin Inc. Lead developer behind Sedvai and the primary architect of the company's product ecosystem. Drives technical direction and product ideation across all verticals.</p>
+        <div class="team-list" id="team-list">
+
+          <div class="team-item">
+            <div class="team-node">
+              <div class="team-node-dot"></div>
+            </div>
+            <div class="team-body">
+              <div class="team-index">— 01</div>
+              <span class="team-role">Founder & CEO</span>
+              <div class="team-name">Andrey Sedogin</div>
+              <div class="team-divider"></div>
+              <p class="team-desc">Creator of Sedogin Inc. Lead developer behind Sedvai and the primary architect of the company's product ecosystem. Drives technical direction and product ideation across all verticals.</p>
+            </div>
           </div>
 
-          <div class="team-card" data-index="02">
-            <span class="card-role">Co-Founder & COO</span>
-            <div class="card-name">Ivan Sedogin</div>
-            <div class="card-line"></div>
-            <p class="card-desc">Co-Founder and Chief Operating Officer. Responsible for company ideation, strategic planning, and financial operations. Right hand to the CEO and key driver of growth.</p>
+          <div class="team-item">
+            <div class="team-node">
+              <div class="team-node-dot"></div>
+            </div>
+            <div class="team-body">
+              <div class="team-index">— 02</div>
+              <span class="team-role">Co-Founder & COO</span>
+              <div class="team-name">Ivan Sedogin</div>
+              <div class="team-divider"></div>
+              <p class="team-desc">Co-Founder and Chief Operating Officer. Responsible for company ideation, strategic planning, and financial operations. Right hand to the CEO and key driver of growth.</p>
+            </div>
           </div>
+
+          <div class="team-item">
+            <div class="team-node">
+              <div class="team-node-dot"></div>
+            </div>
+            <div class="team-body">
+              <div class="team-index">— 03</div>
+              <span class="team-role">Director of Games</span>
+              <div class="team-name">Games Department</div>
+              <div class="team-divider"></div>
+              <p class="team-desc">Leads development of Sedogin: The Path to Power. Bridges creative vision and technical execution in the gaming division.</p>
+            </div>
+          </div>
+
+          <div class="team-item">
+            <div class="team-node">
+              <div class="team-node-dot"></div>
+            </div>
+            <div class="team-body">
+              <div class="team-index">— 04</div>
+              <span class="team-role">Senior Developer</span>
+              <div class="team-name">Nikolos</div>
+              <div class="team-divider"></div>
+              <p class="team-desc">Software engineer responsible for building and shipping Sedogin Inc. applications. Currently the lead developer behind SedPulse — the company's system analytics and productivity tool.</p>
+            </div>
+          </div>
+
         </div>
-
-        <div class="team-featured" style="margin-top:1px;">
-          <div class="team-card" data-index="03">
-            <span class="card-role">Director of Games</span>
-            <div class="card-name">Games Department</div>
-            <div class="card-line"></div>
-            <p class="card-desc">Leads development of Sedogin: The Path to Power. Bridges creative vision and technical execution in the gaming division.</p>
-          </div>
-
-          <div class="team-card" data-index="04">
-            <span class="card-role">Director of Media</span>
-            <div class="card-name">Media Department</div>
-            <div class="card-line"></div>
-            <p class="card-desc">Creates video content and communications for social platforms. The public face of Sedogin Inc.'s brand identity.</p>
-          </div>
-        </div>
-
-        <div class="team-featured" style="margin-top:1px;">
-          <div class="team-card" data-index="05">
-            <span class="card-role">Senior Developer</span>
-            <div class="card-name">Nikolos</div>
-            <div class="card-line"></div>
-            <p class="card-desc">Software engineer responsible for building and shipping Sedogin Inc. applications. Currently the lead developer behind SedPulse — the company's system analytics and productivity tool.</p>
-          </div>
-        </div>
-
       </div>
     </div>
 
@@ -906,11 +1148,24 @@ function show(name){
   localStorage.setItem('sed_tab',name);
   document.getElementById('content').scrollTop=0;
 
-  // glitch on h1 after transition
-  setTimeout(()=>{
-    const h1=document.querySelector('#s-'+name+' h1, #s-'+name+' .card-name, #s-'+name+' .tile-name');
-  },400);
+  // Post-show hooks
+  if (name === 'apps') {
+    currentSlide = 0;
+    document.querySelectorAll('.app-slide').forEach((s,i) => {
+      s.className = 'app-slide' + (i===0 ? ' visible entering' : '');
+    });
+    updateSlideUI();
+  }
+  if (name === 'team') {
+    setTimeout(initTeamAnim, 150);
+  }
 }
+
+// ── INIT ──
+window.addEventListener('load',()=>{
+  const t=localStorage.getItem('sed_tab')||'home';
+  show(t);
+});
 
 function toggleNav(){
   document.getElementById('mob-nav').classList.toggle('open');
@@ -935,17 +1190,45 @@ window.addEventListener('click',e=>{
   });
 });
 
-// ── ACCORDION ──
+// ── ACCORDION WITH TYPEWRITER ──
 function toggleAcc(btn){
-  const body=btn.nextElementSibling;
-  const isOpen=btn.classList.contains('open');
-  document.querySelectorAll('.accordion-head').forEach(b=>{
+  const body = btn.nextElementSibling;
+  const isOpen = btn.classList.contains('open');
+
+  // Close all
+  document.querySelectorAll('.accordion-head').forEach(b => {
     b.classList.remove('open');
-    b.nextElementSibling.style.maxHeight='0';
+    const bd = b.nextElementSibling;
+    bd.style.maxHeight = '0';
+    bd.classList.remove('typing');
+    if (bd._typeTimer) { clearInterval(bd._typeTimer); bd._typeTimer = null; }
   });
-  if(!isOpen){
+
+  if (!isOpen) {
     btn.classList.add('open');
-    body.style.maxHeight=body.scrollHeight+'px';
+    const p = body.querySelector('p');
+
+    // Store original text once
+    if (!p.dataset.full) p.dataset.full = p.textContent;
+    p.textContent = '';
+    body.classList.add('typing');
+    body.style.maxHeight = '300px';
+
+    const full = p.dataset.full;
+    const speed = 10; // ms per char
+    let i = 0;
+
+    body._typeTimer = setInterval(() => {
+      i++;
+      p.textContent = full.slice(0, i);
+      body.style.maxHeight = body.scrollHeight + 'px';
+      if (i >= full.length) {
+        clearInterval(body._typeTimer);
+        body._typeTimer = null;
+        // Keep cursor blinking 1s then remove
+        setTimeout(() => body.classList.remove('typing'), 1000);
+      }
+    }, speed);
   }
 }
 
@@ -1026,11 +1309,96 @@ schedGlitch();
   },4000);
 })();
 
-// ── INIT ──
-window.addEventListener('load',()=>{
-  const t=localStorage.getItem('sed_tab')||'home';
-  show(t);
+// ── APP SLIDER ──
+let currentSlide = 0;
+const TOTAL_SLIDES = 4;
+let isAnimating = false;
+
+function goSlide(index) {
+  if (isAnimating || index === currentSlide) return;
+  isAnimating = true;
+
+  const prev = document.getElementById('slide-' + currentSlide);
+  const next = document.getElementById('slide-' + index);
+
+  // Remove all animation classes from next
+  next.className = 'app-slide';
+  void next.offsetWidth;
+
+  // Leave old
+  prev.classList.add('leaving');
+  prev.classList.remove('visible');
+
+  setTimeout(() => {
+    prev.className = 'app-slide';
+
+    // Enter new
+    next.classList.add('visible', 'entering');
+    currentSlide = index;
+    updateSlideUI();
+
+    setTimeout(() => { isAnimating = false; }, 850);
+  }, 480);
+}
+
+function nextSlide() { if (currentSlide < TOTAL_SLIDES - 1) goSlide(currentSlide + 1); }
+function prevSlide() { if (currentSlide > 0) goSlide(currentSlide - 1); }
+
+function updateSlideUI() {
+  document.getElementById('btn-prev').disabled = currentSlide === 0;
+  document.getElementById('btn-next').disabled = currentSlide === TOTAL_SLIDES - 1;
+  document.querySelectorAll('.slide-dot').forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+}
+
+// Keyboard navigation for slides
+document.addEventListener('keydown', e => {
+  const appsVisible = document.getElementById('s-apps').classList.contains('active');
+  if (!appsVisible) return;
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextSlide();
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') prevSlide();
 });
+
+// Touch swipe for slides
+let touchStartX = 0;
+document.getElementById('apps-showcase')?.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive:true});
+document.getElementById('apps-showcase')?.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 50) { dx < 0 ? nextSlide() : prevSlide(); }
+}, {passive:true});
+
+// ── TEAM SCROLL ANIMATION ──
+function initTeamAnim() {
+  const items = document.querySelectorAll('.team-item');
+  if (!items.length) return;
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), 100);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  items.forEach((item, i) => {
+    item.style.transitionDelay = (i * 0.12) + 's';
+    obs.observe(item);
+  });
+}
+
+// Re-init slider when switching to apps tab
+const _origShow2 = window.showSection || show;
+window._showOverride = function(name) {
+  _origShow2(name);
+  if (name === 'apps') {
+    currentSlide = 0;
+    document.querySelectorAll('.app-slide').forEach((s, i) => {
+      s.className = 'app-slide' + (i === 0 ? ' visible entering' : '');
+    });
+    updateSlideUI();
+  }
+  if (name === 'team') {
+    setTimeout(initTeamAnim, 100);
+  }
+};
 </script>
 </body>
 </html>
