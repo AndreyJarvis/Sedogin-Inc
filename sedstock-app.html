@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SedStock — веб</title>
+<style>
+  :root{ --bg:#f5f5f7; --card:#fff; --accent:#0071e3; --text:#1d1d1f; --muted:#86868b; --border:#e3e3e8; }
+  *{box-sizing:border-box} body{margin:0;font-family:-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:var(--bg);color:var(--text)}
+  .wrap{max-width:900px;margin:0 auto;padding:32px 20px}
+  h1{font-size:28px;margin:0 0 4px} .sub{color:var(--muted);margin:0 0 24px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;margin-bottom:18px}
+  .drop{border:2px dashed var(--border);border-radius:16px;padding:40px;text-align:center;cursor:pointer;
+    transition:.15s} .drop.over{border-color:var(--accent);background:#f0f7ff}
+  .drop b{color:var(--accent)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  input[type=text]{flex:1;min-width:140px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:14px}
+  button{background:var(--accent);color:#fff;border:0;border-radius:12px;padding:12px 22px;font-size:15px;
+    font-weight:600;cursor:pointer} button:disabled{opacity:.5;cursor:default}
+  .files{margin-top:14px;font-size:13px;color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+  th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--border);vertical-align:top}
+  th{color:var(--muted);font-weight:600}
+  .tag{display:inline-block;background:#eef;border-radius:6px;padding:1px 6px;margin:1px;font-size:11px}
+  .bar{height:8px;background:#eee;border-radius:4px;overflow:hidden;margin-top:12px}
+  .bar > i{display:block;height:100%;background:var(--accent);width:0;transition:.3s}
+  .dl{display:inline-block;margin-top:14px;background:#34c759}
+  .err{color:#c00;font-size:13px}
+  .ok{color:#2a9d2a}
+  [hidden]{display:none!important}
+  .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .chip{font-size:13px;color:var(--muted);display:flex;gap:12px;align-items:center}
+  .chip a{color:var(--accent);cursor:pointer;text-decoration:none}
+  .auth{max-width:420px;margin:6vh auto 0}
+  .seg{display:flex;background:#e8e8ed;border-radius:10px;padding:3px;margin:0 0 18px}
+  .seg button{flex:1;background:transparent;color:var(--text);border-radius:8px;padding:9px;font-size:14px}
+  .seg button.on{background:#fff}
+  .field{width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;font-size:15px;margin-bottom:10px}
+  .btnwide{width:100%;height:48px;font-size:16px}
+  .ghost{background:#eef2f7;color:var(--text)}
+  .green{background:#34c759}
+  .muted{color:var(--muted);font-size:13px;text-align:center;margin-top:12px}
+  .plan{background:#f5f8ff;border:2px solid var(--accent);border-radius:16px;padding:18px;margin-bottom:12px}
+  .reshead{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+  .reshead b{font-size:15px}
+  .pcard{border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px;background:#fbfbfd}
+  .pcard .ph{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+  .pcard .fn{font-weight:600;font-size:14px;word-break:break-all}
+  .pcard label{display:block;font-size:12px;color:var(--muted);margin:8px 0 3px}
+  .pcard input,.pcard textarea{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:9px;
+    font-size:14px;font-family:inherit;background:#fff}
+  .pcard textarea{resize:vertical;min-height:56px;line-height:1.4}
+  .kwc{color:var(--muted);font-weight:400}
+  .edbadge{background:var(--border);color:var(--muted);border:0;border-radius:8px;padding:5px 12px;
+    font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+  .edbadge.on{background:#ff9500;color:#fff}
+  .pcard.err{background:#fff5f5;border-color:#f3c2c2}
+</style></head>
+<body><div class="wrap">
+
+  <!-- ЭКРАН ВХОДА / РЕГИСТРАЦИИ (как в приложении) -->
+  <div id="authView" class="auth" hidden>
+    <h1 style="text-align:center;margin-bottom:2px">SedStock</h1>
+    <p class="sub" style="text-align:center">ИИ-разметка фото для микростоков</p>
+    <div class="card">
+      <div class="seg">
+        <button id="segLogin" class="on" onclick="setSeg('login')">Вход</button>
+        <button id="segReg" onclick="setSeg('register')">Регистрация</button>
+      </div>
+      <input id="aEmail" class="field" type="email" placeholder="Email" autocomplete="email">
+      <input id="aPass" class="field" type="password" placeholder="Пароль" autocomplete="current-password">
+      <input id="aCode" class="field" type="text" placeholder="Код приглашения (если есть)" hidden>
+      <div id="authErr" class="err" style="margin-bottom:8px"></div>
+      <button id="authBtn" class="btnwide" onclick="doAuth()">Войти</button>
+      <div id="regHint" class="muted" hidden>🎁 После регистрации — 3 дня бесплатно</div>
+      <div class="muted" style="margin-top:14px"><a onclick="toggleCode()">У меня есть код доступа</a></div>
+      <div id="codeBox" hidden style="margin-top:10px">
+        <input id="accessCode" class="field" type="text" placeholder="Код доступа" autocomplete="off">
+        <button class="btnwide green" onclick="redeemCode()">Активировать</button>
+        <div id="codeErr" class="err" style="margin-top:6px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ЭКРАН ПЛАНА / ПОДПИСКИ -->
+  <div id="planView" hidden>
+    <div class="top"><h1 style="margin:0">Выберите план</h1>
+      <div class="chip"><span id="planEmail"></span><a onclick="logout()">Выйти</a></div></div>
+    <div class="card">
+      <div class="plan">
+        <b style="font-size:18px">SedStock PRO</b>
+        <div class="muted" style="text-align:left;margin:6px 0 12px">• 100 фото в день, 500 в неделю · Фото и видео</div>
+        <button class="btnwide" onclick="subscribe('monthly')">Подписка — <span id="pMonthly"></span></button>
+        <button class="btnwide green" style="margin-top:8px" onclick="subscribe('yearly')">Год — <span id="pYearly"></span> (выгоднее)</button>
+      </div>
+      <button id="trialBtn" class="btnwide ghost" onclick="startTrial()">Начать 3 дня бесплатно</button>
+      <div id="planErr" class="err" style="margin-top:8px"></div>
+      <button class="btnwide ghost" style="margin-top:8px" onclick="recheck()">Я оплатил — проверить</button>
+    </div>
+  </div>
+
+  <!-- РАБОЧИЙ СТОЛ -->
+  <div id="mainView" hidden>
+    <div class="top">
+      <div><h1 style="margin:0">SedStock</h1><p class="sub" style="margin:0">ИИ-разметка фото для стоков</p></div>
+      <div class="chip"><span id="chip"></span><a onclick="logout()">Выйти</a></div>
+    </div>
+    <details class="card" id="instrCard">
+      <summary style="cursor:pointer;font-weight:600;list-style:none">⚙️ Инструкции для ИИ <span class="muted" style="font-weight:400">— необязательно, если не нравится стиль разметки</span></summary>
+      <p class="muted" style="text-align:left;margin:10px 0 6px">Ваши пожелания к разметке: стиль заголовков, что подчёркивать, какие слова не использовать. Базовое правило «не выдумывать факты» и формат сохраняются. Влияет на заголовок, описание и ключевые слова.</p>
+      <textarea id="aiInstr" class="field" style="min-height:80px;resize:vertical" placeholder="Например: заголовки в деловом стиле; добавляй настроение в ключевые слова; не используй слово «person»."></textarea>
+      <div class="muted" id="instrSaved" style="text-align:left;min-height:16px"></div>
+    </details>
+    <div class="card">
+      <div id="drop" class="drop">
+        Перетащите фото сюда или <b>нажмите, чтобы выбрать</b><br>
+        <small style="color:var(--muted)">JPG, PNG, WEBP, TIFF · до 30 за раз</small>
+        <input id="file" type="file" accept="image/*" multiple hidden>
+      </div>
+      <div class="files" id="files"></div>
+      <div class="row"><button id="go" disabled>Анализировать</button></div>
+      <div class="bar" id="barWrap" hidden><i id="bar"></i></div>
+      <div id="status" class="files"></div>
+    </div>
+    <div class="card" id="resCard" hidden>
+      <div class="reshead">
+        <b>Проверьте метаданные и при желании отредактируйте</b>
+        <button id="commit" class="green">⬇ Записать и скачать ZIP</button>
+      </div>
+      <div id="preview"></div>
+      <div id="errs" class="err"></div>
+    </div>
+  </div>
+
+<script>
+const $ = s => document.querySelector(s);
+let CFG = {}, seg = "login", chosen = [];
+
+// Backend runs separately on Render — CORS is open on /api/*
+const API_BASE = "https://sedstock-web.onrender.com";
+
+function getToken(){ try{return localStorage.getItem("ss_token")||"";}catch(e){return "";} }
+function setToken(t){ try{localStorage.setItem("ss_token",t);}catch(e){} }
+function clearToken(){ try{localStorage.removeItem("ss_token");}catch(e){} }
+function getDevice(){ try{ let d=localStorage.getItem("ss_device"); if(!d){ d="web-"+(crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2)); localStorage.setItem("ss_device",d);} return d; }catch(e){ return "web-anon"; } }
+function getInstr(){ try{return localStorage.getItem("ss_instr")||"";}catch(e){return "";} }
+function setInstr(v){ try{localStorage.setItem("ss_instr",v);}catch(e){} }
+
+function show(id){ ["authView","planView","mainView"].forEach(v=>$("#"+v).hidden=(v!==id)); }
+
+async function api(path, body){
+  const r = await fetch(API_BASE+path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body||{})});
+  let j={}; try{ j=await r.json(); }catch(e){}
+  return {ok:r.ok, code:r.status, data:j};
+}
+
+(async function boot(){
+  try{ CFG = await (await fetch(API_BASE+"/api/config")).json(); }catch(e){ CFG={}; }
+  $("#pMonthly").textContent = CFG.price_monthly||"$4 / месяц";
+  $("#pYearly").textContent  = CFG.price_yearly||"$30 / год";
+  const ai=$("#aiInstr"); if(ai){ ai.value=getInstr();
+    let t; ai.addEventListener("input",()=>{ setInstr(ai.value); clearTimeout(t);
+      $("#instrSaved").textContent="Сохранено ✓"; t=setTimeout(()=>{$("#instrSaved").textContent="";},1500); }); }
+  if(CFG.auth_enabled === false){ show("mainView"); return; }
+  const tok = getToken();
+  if(!tok){ show("authView"); return; }
+  const r = await api("/api/status",{token:tok});
+  routeByStatus((r.data||{}).status);
+})();
+
+function routeByStatus(st){
+  if(st && st.active){ show("mainView"); renderChip(st); }
+  else if(st){ show("planView"); $("#planEmail").textContent=st.email||""; $("#trialBtn").hidden=(st.state!=="none"); }
+  else { show("authView"); }
+}
+
+function setSeg(s){ seg=s; $("#segLogin").classList.toggle("on",s==="login"); $("#segReg").classList.toggle("on",s==="register");
+  $("#aCode").hidden=(s!=="register"); $("#regHint").hidden=(s!=="register");
+  $("#authBtn").textContent=s==="login"?"Войти":"Создать аккаунт"; $("#authErr").textContent=""; }
+
+function toggleCode(){ $("#codeBox").hidden=!$("#codeBox").hidden; }
+async function redeemCode(){
+  const code=$("#accessCode").value.trim();
+  if(!code){ $("#codeErr").textContent="Введите код."; return; }
+  $("#codeErr").textContent="Проверяю код…";
+  const r=await api("/api/redeem",{code, device_id:getDevice()});
+  if(r.ok && r.data.token){ $("#codeErr").textContent=""; setToken(r.data.token); routeByStatus(r.data.status); }
+  else { $("#codeErr").textContent=(r.data.message||"Код не подошёл."); }
+}
+
+async function doAuth(){
+  const email=$("#aEmail").value.trim(), password=$("#aPass").value, code=$("#aCode").value.trim();
+  if(!email||!password){ $("#authErr").textContent="Введите email и пароль."; return; }
+  $("#authBtn").disabled=true; $("#authErr").textContent="Подождите…";
+  const r = await api(seg==="login"?"/api/login":"/api/register",{email,password,code,device_id:getDevice()});
+  $("#authBtn").disabled=false;
+  if(!r.ok){ $("#authErr").textContent=(r.data.message||r.data.error||"Не удалось. Проверьте данные."); return; }
+  $("#authErr").textContent=""; setToken(r.data.token); routeByStatus(r.data.status);
+}
+
+async function startTrial(){
+  $("#planErr").textContent="Включаю пробный период…";
+  const r = await api("/api/start_trial",{token:getToken()});
+  if(r.ok && r.data.status){ routeByStatus(r.data.status); }
+  else { $("#planErr").textContent=(r.data.message||r.data.error||"Не удалось начать триал."); }
+}
+function subscribe(period){
+  const url = period==="yearly"?CFG.paypal_yearly:CFG.paypal_monthly;
+  if(url) window.open(url,"_blank");
+  $("#planErr").textContent="Открыл оплату в PayPal. После оплаты нажмите «Я оплатил — проверить».";
+}
+async function recheck(){
+  $("#planErr").textContent="Проверяю оплату…";
+  const r = await api("/api/status",{token:getToken()}); const st=(r.data||{}).status;
+  if(st && st.active){ routeByStatus(st); } else { $("#planErr").textContent="Оплата пока не подтверждена. Подождите минуту и нажмите ещё раз."; }
+}
+
+function renderChip(st){
+  let t="Нет плана";
+  if(st.state==="unlimited") t="Безлимит";
+  else if(st.state==="code") t="Доступ по коду · "+(st.used||0)+"/"+(st.quota||0)+" сегодня";
+  else if(st.state==="paid") t="Подписка · "+(st.days_left||0)+" дн.";
+  else if(st.state==="trial") t="Пробный · "+(st.days_left||0)+" дн. · "+(st.used||0)+"/"+(st.quota||0);
+  $("#chip").textContent=t;
+}
+function logout(){ clearToken(); location.reload(); }
+
+const drop=$("#drop"), file=$("#file"), go=$("#go"), commit=$("#commit");
+let jobId=null;
+drop.onclick=()=>file.click();
+["dragover","dragenter"].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.add("over");}));
+["dragleave","drop"].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.remove("over");}));
+drop.addEventListener("drop",ev=>addFiles(ev.dataTransfer.files));
+file.onchange=()=>addFiles(file.files);
+function addFiles(list){ chosen=Array.from(list).slice(0,30); $("#files").textContent=chosen.length?`Выбрано файлов: ${chosen.length}`:""; go.disabled=chosen.length===0; }
+
+function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+// ФАЗА 1 — анализ (ИИ читает фото, файлы не трогаются)
+go.onclick=async()=>{
+  if(!chosen.length) return;
+  go.disabled=true; $("#barWrap").hidden=false; $("#bar").style.width="15%";
+  $("#status").textContent="Анализирую… ИИ читает фото (файлы пока не меняются).";
+  $("#resCard").hidden=true; jobId=null;
+  const fd=new FormData(); chosen.forEach(f=>fd.append("images",f)); fd.append("token",getToken());
+  fd.append("instructions",getInstr());
+  try{
+    const r=await fetch(API_BASE+"/api/analyze",{method:"POST",body:fd});
+    $("#bar").style.width="90%";
+    if(r.status===402){ const s=await api("/api/status",{token:getToken()}); routeByStatus((s.data||{}).status); return; }
+    const data=await r.json();
+    if(r.status===429){ $("#status").innerHTML=`<span class="err">${esc(data.message||"Лимит исчерпан.")}</span>`; go.disabled=false; $("#barWrap").hidden=true; return; }
+    if(!data.ok){ $("#status").innerHTML=`<span class="err">${esc(data.message||"Ошибка")}</span>`; go.disabled=false; return; }
+    $("#bar").style.width="100%"; jobId=data.job_id;
+    const note=data.note?` <span class="err">${esc(data.note)}</span>`:"";
+    $("#status").innerHTML=`<span class="ok">Готово: распознано ${data.items.length}, ошибок ${(data.errors||[]).length}. Проверьте и жмите «Записать и скачать».</span>${note}`;
+    renderPreview(data);
+    $("#resCard").hidden=false;
+    const s=await api("/api/status",{token:getToken()}); if((s.data||{}).status) renderChip(s.data.status);
+  }catch(e){ $("#status").innerHTML=`<span class="err">Сбой сети: ${esc(e)}</span>`; }
+  go.disabled=false;
+};
+
+function renderPreview(data){
+  const box=$("#preview"); box.innerHTML="";
+  (data.items||[]).forEach(x=>{
+    const kw=(x.keywords||[]).join(", ");
+    const on=x.is_editorial?"on":"";
+    box.insertAdjacentHTML("beforeend",
+      `<div class="pcard" data-id="${esc(x.id)}" data-ed="${x.is_editorial?1:0}">
+         <div class="ph"><span class="fn">${esc(x.filename)}</span>
+           <button class="edbadge ${on}" data-role="ed" type="button">Editorial</button></div>
+         <label>Заголовок</label><input class="p-title" value="${esc(x.title)}">
+         <label>Описание</label><input class="p-desc" value="${esc(x.description)}">
+         <label>Ключевые слова через запятую <span class="kwc">(${(x.keywords||[]).length})</span></label>
+         <textarea class="p-kw">${esc(kw)}</textarea>
+       </div>`);
+  });
+  (data.errors||[]).forEach(e=>{
+    box.insertAdjacentHTML("beforeend",
+      `<div class="pcard err"><span class="fn">${esc(e.filename)}</span> — ${esc(e.error)}</div>`);
+  });
+  $("#errs").innerHTML="";
+}
+
+// делегирование: тумблер Editorial + счётчик ключевых слов
+$("#preview").addEventListener("click",ev=>{
+  const b=ev.target.closest('[data-role="ed"]'); if(!b) return;
+  const c=b.closest(".pcard"); const on=c.dataset.ed==="1"?"0":"1";
+  c.dataset.ed=on; b.classList.toggle("on",on==="1");
+});
+$("#preview").addEventListener("input",ev=>{
+  if(!ev.target.classList.contains("p-kw")) return;
+  const n=ev.target.value.split(",").map(s=>s.trim()).filter(Boolean).length;
+  const el=ev.target.closest(".pcard").querySelector(".kwc"); if(el) el.textContent=`(${n})`;
+});
+
+// ФАЗА 2 — запись отредактированных метаданных + скачивание ZIP
+commit.onclick=async()=>{
+  if(!jobId) return;
+  const items=[];
+  document.querySelectorAll("#preview .pcard:not(.err)").forEach(c=>{
+    items.push({ id:c.dataset.id,
+      title:c.querySelector(".p-title").value,
+      description:c.querySelector(".p-desc").value,
+      keywords:c.querySelector(".p-kw").value,
+      is_editorial:c.dataset.ed==="1" });
+  });
+  if(!items.length) return;
+  commit.disabled=true; $("#status").innerHTML="Записываю метаданные в файлы…";
+  const r=await api("/api/commit",{job_id:jobId, token:getToken(), items});
+  commit.disabled=false;
+  if(!r.ok || !r.data.ok){ $("#status").innerHTML=`<span class="err">${esc((r.data&&r.data.message)||"Не удалось записать.")}</span>`; return; }
+  $("#status").innerHTML=`<span class="ok">Записано ${r.data.processed}. Скачивание началось…</span>`;
+  $("#errs").innerHTML=((r.data.errors)||[]).map(e=>`${esc(e.filename)}: ${esc(e.error)}`).join("<br>");
+  window.location.href=API_BASE+"/api/download/"+r.data.download_id;   // ZIP отдаётся как файл
+  jobId=null; $("#resCard").hidden=true; chosen=[]; $("#files").textContent=""; go.disabled=true;
+};
+</script>
+</div></body></html>
