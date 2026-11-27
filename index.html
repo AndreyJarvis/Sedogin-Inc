@@ -82,11 +82,17 @@ nav{display:flex;gap:6px;align-items:center;}
 .eyebrow{font-family:var(--body);font-size:15px;font-weight:500;color:var(--glow);}
 
 /* HOME */
-.home-hero{
-  flex:1;display:flex;flex-direction:column;align-items:center;
-  text-align:center;padding:56px 24px 0;position:relative;overflow:hidden;
+.home-hero{--p:0;position:relative;flex:none;height:calc(var(--vh,800px) * 2.1);}
+.hero-sticky{
+  position:sticky;top:0;height:var(--vh,800px);overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;text-align:center;padding:56px 24px 0;
 }
-.hero-copy{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;animation:heroIn .9s cubic-bezier(.22,1,.36,1) both;}
+.hero-sticky::after{content:'';position:absolute;left:0;right:0;bottom:0;height:180px;background:linear-gradient(180deg,transparent,var(--deep) 85%);z-index:4;pointer-events:none;}
+.hero-copy{
+  position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;
+  animation:heroIn .9s cubic-bezier(.22,1,.36,1) backwards;
+  opacity:calc(1 - var(--p) * 1.7);transform:translateY(calc(var(--p) * -60px));
+}
 @keyframes heroIn{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:none;}}
 .hero-title{
   font-family:var(--display);font-weight:300;
@@ -100,52 +106,82 @@ nav{display:flex;gap:6px;align-items:center;}
 .hero-sub{font-size:18px;color:var(--muted);max-width:460px;margin-bottom:34px;}
 .hero-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
 
-.hero-stage{position:relative;width:100%;max-width:1200px;margin-top:52px;height:400px;flex-shrink:0;}
+.hero-stage{position:relative;flex:1;width:100%;max-width:1200px;margin-top:40px;}
 .hero-stage::before{
   content:'';position:absolute;left:50%;top:-40px;width:900px;height:520px;transform:translateX(-50%);
   background:radial-gradient(ellipse at 50% 60%,rgba(77,184,212,0.16),transparent 65%);pointer-events:none;
 }
 .planet{
-  position:absolute;left:50%;top:150px;width:2200px;height:2200px;transform:translateX(-50%);
-  border-radius:50%;z-index:1;
+  position:absolute;left:50%;top:230px;width:2200px;height:2200px;
+  transform:translateX(-50%) translateY(calc(var(--p) * -60px));border-radius:50%;z-index:1;
   background:radial-gradient(circle at 50% 0%,rgba(77,184,212,0.28) 0%,rgba(16,40,66,0.95) 6%,#050b16 22%);
   box-shadow:0 -1px 0 rgba(170,230,245,0.75),0 -18px 60px rgba(77,184,212,0.35),0 -60px 160px rgba(77,184,212,0.18),inset 0 3px 24px rgba(120,210,235,0.35);
 }
-
-.mock{
-  position:relative;z-index:2;margin:0 auto;width:min(860px,94%);
-  border-radius:14px;border:1px solid rgba(77,184,212,0.28);
-  background:linear-gradient(180deg,#0e1c32,#070f1d);
-  box-shadow:0 30px 80px rgba(0,0,0,0.55),0 0 0 1px rgba(255,255,255,0.02) inset;
-  text-align:left;overflow:hidden;
-  animation:mockIn 1.1s cubic-bezier(.22,1,.36,1) .15s both;
+.laptop{
+  position:relative;z-index:2;width:min(760px,78%);margin:0 auto;
+  transform:translateY(calc(-120px - var(--p) * 120px)) scale(calc(0.9 + var(--p) * 0.14));transform-origin:50% 100%;
+  animation:mockIn 1.1s cubic-bezier(.22,1,.36,1) .15s backwards;
 }
-@keyframes mockIn{from{opacity:0;transform:translateY(40px);}to{opacity:1;transform:none;}}
-.mock-bar{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid rgba(77,184,212,0.14);}
-.mock-bar i{width:10px;height:10px;border-radius:50%;background:rgba(190,212,222,0.18);}
-.mock-bar b{margin-left:10px;font-family:var(--display);font-weight:300;font-size:13px;color:var(--muted);}
-.mock-body{display:grid;grid-template-columns:1.35fr 1fr;gap:22px;padding:30px;}
-
-.ask{border:1px solid rgba(77,184,212,0.22);border-radius:12px;background:rgba(77,184,212,0.04);padding:18px 20px;}
-.ask-label{font-size:12px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(77,184,212,0.7);margin-bottom:8px;}
-.ask-text{font-size:18px;color:var(--white);min-height:29px;}
-.ask-caret{display:inline-block;width:2px;height:20px;background:var(--glow);vertical-align:-3px;margin-left:2px;animation:cursorBlink .9s step-end infinite;}
-.ask-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
-.ask-chips span{
-  font-size:14px;color:var(--muted);padding:6px 14px;border-radius:999px;
-  border:1px solid rgba(77,184,212,0.2);transition:color .3s ease,border-color .3s ease,background .3s ease;
+@keyframes mockIn{from{opacity:0;transform:translateY(40px) scale(.88);}}
+.lid-wrap{perspective:1800px;}
+.lid{
+  position:relative;transform-origin:50% 100%;
+  transform:rotateX(calc((1 - var(--p)) * 58deg));
+  background:#0a0d13;border-radius:18px 18px 6px 6px;padding:16px 16px 20px;
+  border:1px solid rgba(170,200,220,0.2);
+  box-shadow:0 0 0 2px #05070b inset,0 50px 120px rgba(0,0,0,0.6),0 0 80px rgba(77,184,212,calc(var(--p) * 0.18));
 }
-.ask-chips span.on{color:var(--white);border-color:rgba(77,184,212,0.7);background:rgba(77,184,212,0.1);}
-.ask-answer{margin-top:18px;font-size:15px;line-height:1.6;color:var(--text);min-height:48px;transition:opacity .3s ease;}
+.lid::before{content:'';position:absolute;top:6px;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:#1c2430;}
+.screen{position:relative;aspect-ratio:16/10;border-radius:6px;overflow:hidden;background:#000;}
+.screen img{display:block;width:100%;height:100%;object-fit:cover;filter:brightness(calc(0.3 + var(--p) * 0.7));}
+.screen::after{content:'';position:absolute;inset:0;background:linear-gradient(125deg,rgba(255,255,255,0.07),transparent 38%);pointer-events:none;}
+.base{
+  position:relative;height:18px;width:116%;margin-left:-8%;
+  background:linear-gradient(180deg,#46505f 0%,#232a35 35%,#11151c 100%);
+  border-radius:3px 3px 16px 16px;box-shadow:0 20px 40px rgba(0,0,0,0.5);
+}
+.base::before{content:'';position:absolute;top:0;left:41%;width:18%;height:6px;background:#161b23;border-radius:0 0 8px 8px;}
 
-.modes{border:1px solid rgba(77,184,212,0.18);border-radius:12px;overflow:hidden;background:rgba(0,0,0,0.18);}
-.modes-head{font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);padding:13px 18px;border-bottom:1px solid rgba(77,184,212,0.12);}
-.mode{display:flex;align-items:center;gap:12px;padding:13px 18px;font-size:15px;color:var(--text);border-bottom:1px solid rgba(77,184,212,0.08);transition:background .3s ease;}
-.mode:last-child{border-bottom:none;}
-.mode::before{content:'';width:7px;height:7px;border-radius:50%;background:rgba(77,184,212,0.3);transition:background .3s ease,box-shadow .3s ease;}
-.mode em{margin-left:auto;font-style:normal;font-size:12px;color:var(--glow);padding:2px 9px;border-radius:999px;border:1px solid rgba(77,184,212,0.4);}
-.mode.on{background:rgba(77,184,212,0.07);color:var(--white);}
-.mode.on::before{background:var(--glow);box-shadow:0 0 8px var(--glow);}
+.home-products{max-width:1180px;width:100%;margin:0 auto;padding:40px 48px 40px;}
+.hp-head{text-align:center;margin-bottom:72px;}
+.hp-head h2{font-family:var(--display);font-weight:300;font-size:clamp(28px,3.6vw,46px);letter-spacing:-0.025em;margin-top:10px;}
+.hp{display:grid;grid-template-columns:1fr 1.1fr;gap:64px;align-items:center;margin-bottom:120px;}
+.hp.reverse .hp-text{order:2;}
+.hp-text,.hp-visual{opacity:0;transform:translateY(36px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,1,.36,1);}
+.hp-visual{transition-delay:.12s;}
+.hp.in .hp-text,.hp.in .hp-visual{opacity:1;transform:none;}
+.hp-num{font-size:15px;font-weight:500;color:var(--glow);margin-bottom:14px;}
+.hp h3{font-family:var(--display);font-weight:300;font-size:clamp(38px,4.6vw,60px);letter-spacing:-0.03em;line-height:1.02;margin-bottom:20px;}
+.hp p{font-size:18px;line-height:1.7;color:var(--text);margin-bottom:30px;max-width:480px;}
+.hp-actions{display:flex;gap:12px;flex-wrap:wrap;}
+
+.vis{
+  position:relative;border-radius:14px;border:1px solid rgba(77,184,212,0.24);
+  background:linear-gradient(180deg,#0e1c32,#070f1d);overflow:hidden;
+  box-shadow:0 30px 80px rgba(0,0,0,0.45);
+}
+
+.vis-video{display:block;width:100%;height:auto;aspect-ratio:848/496;background:#000;}
+.vis-cap{padding:16px 20px;font-size:15px;color:var(--text);border-top:1px solid rgba(77,184,212,0.16);}
+.vis-cap b{font-family:var(--display);font-weight:400;font-size:12px;color:var(--glow);margin-right:8px;}
+.vs{display:grid;grid-template-columns:1fr 1fr;}
+.vs-photo{position:relative;min-height:300px;background:linear-gradient(180deg,#f3b07a 0%,#e58a6a 35%,#7b5c8c 70%,#2c3557 100%);overflow:hidden;}
+.vs-photo::before{content:'';position:absolute;left:50%;top:44%;width:70px;height:70px;margin-left:-35px;border-radius:50%;background:#ffe2b8;box-shadow:0 0 60px rgba(255,214,160,0.8);}
+.vs-m1,.vs-m2{position:absolute;left:0;right:0;bottom:0;}
+.vs-m1{height:52%;background:#4a4466;clip-path:polygon(0 60%,18% 25%,34% 55%,52% 10%,70% 48%,86% 22%,100% 45%,100% 100%,0 100%);}
+.vs-m2{height:36%;background:#1d2540;clip-path:polygon(0 40%,22% 15%,40% 50%,62% 20%,80% 55%,100% 30%,100% 100%,0 100%);}
+.vs-meta{padding:24px;display:flex;flex-direction:column;gap:12px;min-width:0;}
+.vs-label{font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);}
+.vs-title{font-size:15px;color:var(--white);min-height:46px;line-height:1.5;}
+.vs-kw{display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;min-height:120px;}
+.vs-kw span{font-size:12.5px;color:var(--text);padding:4px 10px;border-radius:999px;border:1px solid rgba(77,184,212,0.25);animation:kwIn .35s ease both;}
+@keyframes kwIn{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:none;}}
+.vs-count{margin-top:auto;font-size:13px;color:var(--glow);font-variant-numeric:tabular-nums;}
+
+.home-cta{text-align:center;padding:40px 24px 110px;max-width:900px;margin:0 auto;}
+.home-cta h2{font-family:var(--display);font-weight:300;font-size:clamp(26px,3.2vw,42px);line-height:1.15;letter-spacing:-0.025em;margin-bottom:16px;}
+.home-cta p{font-size:18px;color:var(--text);margin-bottom:32px;}
+.home-cta .hero-actions{justify-content:center;}
 
 /* BUTTONS */
 .btn{
@@ -354,11 +390,20 @@ footer{
   nav{display:none;}
   .hamburger{display:flex;}
   .home-hero{padding:52px 20px 0;}
-  .hero-stage{margin-top:40px;height:330px;}
-  .planet{top:150px;width:1100px;height:1100px;}
-  .mock-body{grid-template-columns:1fr;padding:20px;}
-  .modes{display:none;}
-  .ask-text{font-size:16px;}
+  .hero-sticky{padding:44px 18px 0;}
+  .hero-stage{margin-top:30px;}
+  .planet{top:210px;width:1100px;height:1100px;}
+  .laptop{width:100%;transform:translateY(calc(-40px - var(--p) * 90px)) scale(calc(0.92 + var(--p) * 0.08));}
+  .lid{padding:9px 9px 12px;border-radius:12px 12px 4px 4px;}
+  .base{height:11px;}
+  .home-products{padding:24px 20px 20px;}
+  .hp-head{margin-bottom:48px;}
+  .hp{grid-template-columns:1fr;gap:32px;margin-bottom:80px;}
+  .hp.reverse .hp-text{order:0;}
+  .hp p{font-size:17px;}
+  .vs{grid-template-columns:1fr;}
+  .vs-photo{min-height:200px;}
+  .home-cta{padding:20px 20px 80px;}
   .hero-sub{font-size:17px;}
   .apps-showcase{padding:44px 22px;}
   .slide-desc{font-size:17px;}
@@ -431,42 +476,110 @@ footer{
 
     <section class="section" id="s-home">
       <div class="home-hero">
-        <div class="hero-copy">
-          <h1 class="hero-title">Building the next layer of<br><span>personal computing.</span></h1>
-          <p class="hero-sub">AI apps for Windows and the web.</p>
-          <div class="hero-actions">
-            <a class="btn btn-primary" onclick="show('apps')">
-              Explore Products
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </a>
-            <a class="btn btn-ghost" href="ms-windows-store://pdp/?productid=9NFN7ZC416W7">Get Sedvai</a>
+        <div class="hero-sticky">
+          <div class="hero-copy">
+            <h1 class="hero-title">Building the next layer of<br><span>personal computing.</span></h1>
+            <p class="hero-sub">AI apps for Windows and the web.</p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" onclick="show('apps')">
+                Explore Products
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+              <a class="btn btn-ghost" href="ms-windows-store://pdp/?productid=9NFN7ZC416W7">Get Sedvai</a>
+            </div>
+          </div>
+          <div class="hero-stage">
+            <div class="planet"></div>
+            <div class="laptop">
+              <div class="lid-wrap"><div class="lid"><div class="screen"><img src="img/sedvai-home.webp" alt="Sedvai main screen: I'm here. Describe the task and I'll take it from there." width="1600" height="1000"></div></div></div>
+              <div class="base"></div>
+            </div>
           </div>
         </div>
+      </div>
 
-        <div class="hero-stage">
-          <div class="planet"></div>
-          <div class="mock" aria-hidden="true">
-            <div class="mock-bar"><i></i><i></i><i></i><b>Sedvai</b></div>
-            <div class="mock-body">
-              <div>
-                <div class="ask">
-                  <div class="ask-label">Ask Sedvai</div>
-                  <div class="ask-text"><span id="ask-text"></span><span class="ask-caret"></span></div>
-                </div>
-                <div class="ask-chips" id="ask-chips">
-                  <span>Vision</span><span>Science</span><span>Voice</span><span>Guard</span>
-                </div>
-                <div class="ask-answer" id="ask-answer"></div>
-              </div>
-              <div class="modes">
-                <div class="modes-head">System Mode</div>
-                <div class="mode" data-mode="0">Normal Chat<em>Free</em></div>
-                <div class="mode" data-mode="1">Screen Vision<em>20/day</em></div>
-                <div class="mode" data-mode="2">Science Mode<em>10/day</em></div>
-                <div class="mode" data-mode="3">Friend in Call<em>Pro</em></div>
+      <div class="home-products">
+        <div class="hp-head">
+          <div class="eyebrow">Products</div>
+          <h2>What we make</h2>
+        </div>
+
+        <article class="hp">
+          <div class="hp-text">
+            <div class="hp-num">01 · AI Assistant</div>
+            <h3>Sedvai</h3>
+            <p>An AI assistant that sees your screen and understands your voice. Ask about anything in front of you, control your PC by speaking, and keep your data on your own hardware.</p>
+            <div class="hp-actions">
+              <a class="btn btn-primary" href="ms-windows-store://pdp/?productid=9NFN7ZC416W7">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h11v11H0zm13 0h11v11H13zM0 13h11v11H0zm13 0h11v11H13z"/></svg>
+                Microsoft Store
+              </a>
+              <button class="btn btn-ghost" onclick="openProduct(0)">Details</button>
+            </div>
+          </div>
+          <div class="hp-visual" aria-hidden="true">
+            <div class="vis">
+              <video class="vis-video" src="img/sedvai.mp4" poster="img/sedvai-poster.webp" muted loop playsinline preload="none"></video>
+              <div class="vis-cap"><b>Sedvai</b>Online</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="hp reverse">
+          <div class="hp-text">
+            <div class="hp-num">02 · Productivity</div>
+            <h3>SedPulse</h3>
+            <p>Live system analytics, an auto-clicker and screen time tracking in one small app. See what your machine is doing and automate the boring parts.</p>
+            <div class="hp-actions">
+              <a class="btn btn-primary" href="ms-windows-store://pdp/?productid=9NJH2L6R7QNK">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h11v11H0zm13 0h11v11H13zM0 13h11v11H0zm13 0h11v11H13z"/></svg>
+                Microsoft Store
+              </a>
+              <button class="btn btn-ghost" onclick="openProduct(1)">Details</button>
+            </div>
+          </div>
+          <div class="hp-visual" aria-hidden="true">
+            <div class="vis">
+              <video class="vis-video" src="img/sedpulse.mp4" poster="img/sedpulse-poster.webp" muted loop playsinline preload="none"></video>
+              <div class="vis-cap"><b>SedPulse</b>Starting up</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="hp">
+          <div class="hp-text">
+            <div class="hp-num">03 · AI Metadata</div>
+            <h3>SedStock</h3>
+            <p>Drop in your photos and get titles, descriptions and 50 keywords for each one, written straight into the files. Made for microstock contributors and photographers.</p>
+            <div class="hp-actions">
+              <a class="btn btn-primary" href="https://sedstock-web.onrender.com" target="_blank" rel="noopener">
+                Launch Web Version
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+              <button class="btn btn-ghost" onclick="openProduct(2)">Details</button>
+            </div>
+          </div>
+          <div class="hp-visual" aria-hidden="true">
+            <div class="vis vs">
+              <div class="vs-photo"><div class="vs-m1"></div><div class="vs-m2"></div></div>
+              <div class="vs-meta">
+                <div class="vs-label">Title</div>
+                <div class="vs-title" id="vs-title"></div>
+                <div class="vs-label">Keywords</div>
+                <div class="vs-kw" id="vs-kw"></div>
+                <div class="vs-count"><span id="vs-n">0</span> / 50 keywords</div>
               </div>
             </div>
           </div>
+        </article>
+      </div>
+
+      <div class="home-cta">
+        <h2>Have a question or an idea?</h2>
+        <p>We read every message.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" onclick="show('info')">Contact us</a>
+          <a class="btn btn-ghost" onclick="show('team')">Meet the team</a>
         </div>
       </div>
     </section>
@@ -680,6 +793,7 @@ function show(name){
   document.getElementById('content').scrollTop = 0;
   if (name === 'apps') resetSlides();
   if (name === 'team') revealTeam();
+  if (name === 'home' && window.updateHomeScroll) window.updateHomeScroll();
 }
 
 function toggleNav(){
@@ -763,40 +877,68 @@ function openProduct(i){
 
 const canHover = window.matchMedia('(hover: hover)').matches;
 
-(function heroDemo(){
-  const textEl = document.getElementById('ask-text');
-  const ansEl = document.getElementById('ask-answer');
-  const chips = document.querySelectorAll('#ask-chips span');
-  const modes = document.querySelectorAll('.mode');
-  const script = [
-    { q: "What's on my screen right now?", a: 'You have a code editor open with a failing build. The error is on line 42.', chip: 0, mode: 1 },
-    { q: 'Explain this formula simply.', a: "It's the area of a circle: pi times the radius squared.", chip: 1, mode: 2 },
-    { q: 'Turn the volume down and open Spotify.', a: 'Done. Volume set to 30%, Spotify is opening.', chip: 2, mode: 3 },
-    { q: 'Is this link safe to open?', a: 'Looks like a phishing page. I would not enter a password there.', chip: 3, mode: 0 }
-  ];
-  let i = 0;
-  function setActive(s){
-    chips.forEach((c, k) => c.classList.toggle('on', k === s.chip));
-    modes.forEach((m, k) => m.classList.toggle('on', k === s.mode));
+(function homeScroll(){
+  const content = document.getElementById('content');
+  const hero = document.querySelector('.home-hero');
+  const home = document.getElementById('s-home');
+  let raf = 0;
+  function update(){
+    raf = 0;
+    content.style.setProperty('--vh', content.clientHeight + 'px');
+    if (!home.classList.contains('active')) return;
+    if (reduceMotion) { hero.style.setProperty('--p', 1); return; }
+    const range = hero.offsetHeight - content.clientHeight;
+    const p = range > 0 ? Math.min(Math.max(content.scrollTop / range, 0), 1) : 1;
+    hero.style.setProperty('--p', p.toFixed(3));
   }
-  function run(){
-    const s = script[i];
-    setActive(s);
-    ansEl.style.opacity = 0;
-    textEl.textContent = '';
-    if (reduceMotion) { textEl.textContent = s.q; ansEl.textContent = s.a; ansEl.style.opacity = 1; return; }
-    let n = 0;
-    const type = setInterval(() => {
-      n++;
-      textEl.textContent = s.q.slice(0, n);
-      if (n >= s.q.length) {
-        clearInterval(type);
-        setTimeout(() => { ansEl.textContent = s.a; ansEl.style.opacity = 1; }, 450);
-        setTimeout(() => { i = (i + 1) % script.length; run(); }, 4200);
+  window.updateHomeScroll = update;
+  content.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+
+  const blocks = document.querySelectorAll('.hp');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      e.target.dataset.visible = e.isIntersecting ? '1' : '0';
+      if (e.isIntersecting) e.target.classList.add('in');
+      const v = e.target.querySelector('video');
+      if (v) { if (e.isIntersecting && !reduceMotion) { v.play().catch(() => {}); } else { v.pause(); } }
+    });
+  }, { root: content, threshold: 0.2 });
+  blocks.forEach(b => io.observe(b));
+
+  const stockBlock = blocks[2];
+  const titleEl = document.getElementById('vs-title');
+  const kwEl = document.getElementById('vs-kw');
+  const nEl = document.getElementById('vs-n');
+  const title = 'Sunrise over misty mountain ridges with warm golden sky';
+  const kws = ['sunrise','mountain','landscape','nature','morning','sky','golden','travel','scenic','outdoor','peaceful','horizon','valley','dawn','silhouette','sun','calm','wilderness'];
+  let running = false;
+  function runStock(){
+    if (running) return;
+    running = true;
+    titleEl.textContent = ''; kwEl.innerHTML = ''; nEl.textContent = '0';
+    let i = 0;
+    const tt = setInterval(() => {
+      i++; titleEl.textContent = title.slice(0, i);
+      if (i >= title.length) {
+        clearInterval(tt);
+        let k = 0;
+        const kt = setInterval(() => {
+          const s = document.createElement('span'); s.textContent = kws[k]; kwEl.appendChild(s);
+          k++; nEl.textContent = Math.round(k / kws.length * 50);
+          if (k >= kws.length) { clearInterval(kt); setTimeout(() => { running = false; if (stockBlock.dataset.visible === '1') runStock(); }, 4000); }
+        }, 140);
       }
-    }, 38);
+    }, 28);
   }
-  run();
+  if (reduceMotion) {
+    titleEl.textContent = title;
+    kws.forEach(w => { const s = document.createElement('span'); s.textContent = w; kwEl.appendChild(s); });
+    nEl.textContent = '50';
+  } else {
+    new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) runStock(); }), { root: content, threshold: 0.35 }).observe(stockBlock);
+  }
 })();
 
 (function teamFx(){
